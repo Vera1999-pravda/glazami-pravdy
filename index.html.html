@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Глазами правды — детективная игра</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #C8556A;
+    --rose-light: #F2D0D6;
+    --rose-dark: #8B2A3A;
+    --gold: #C9A84C;
+    --gold-light: #F5EDD5;
+    --ink: #1C1410;
+    --cream: #FAF6F0;
+    --muted: #7A6E68;
+    --surface: #FFFFFF;
+    --border: rgba(28,20,16,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Jost', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── NOISE TEXTURE overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    position: fixed; inset: 0;
+    background: var(--ink);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 100;
+    transition: opacity 0.8s;
+  }
+  #intro.hidden { opacity: 0; pointer-events: none; }
+
+  .intro-eye {
+    width: 80px; height: 80px;
+    margin-bottom: 2rem;
+    animation: blink 3s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%,90%,100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.05); }
+  }
+
+  .intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 400;
+    color: var(--cream);
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .intro-sub {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 3rem;
+  }
+  .start-btn {
+    border: 1px solid var(--rose);
+    background: transparent;
+    color: var(--rose-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 14px 40px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .start-btn:hover {
+    background: var(--rose);
+    color: var(--cream);
+  }
+
+  /* ── GAME WRAPPER ── */
+  #game {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    padding: 2rem 1.5rem 4rem;
+    display: none;
+  }
+  #game.visible { display: block; }
+
+  /* ── HEADER ── */
+  .game-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .game-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+  .game-header .date-line {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── CLUE BAR ── */
+  .clue-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 1.5rem;
+  }
+  .clue-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .clue-dots {
+    display: flex; gap: 6px; flex: 1;
+  }
+  .dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--cream);
+    transition: background 0.4s, border-color 0.4s;
+    position: relative;
+  }
+  .dot.active {
+    background: var(--rose);
+    border-color: var(--rose-dark);
+  }
+  .dot.active::after {
+    content: '';
+    position: absolute; inset: 3px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+  }
+  .clue-count {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rose);
+    white-space: nowrap;
+  }
+
+  /* ── FEEDBACK TOAST ── */
+  #feedback {
+    background: var(--rose-light);
+    border-left: 3px solid var(--rose);
+    border-radius: 0 4px 4px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--rose-dark);
+    margin-bottom: 12px;
+    transform: translateY(-4px);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  #feedback.show {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ── SCENE CARD ── */
+  .scene-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .scene-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+  }
+  .scene-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .scene-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  /* ── CHOICES ── */
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+
+  .choice-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+    text-align: left;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .choice-btn:hover {
+    border-color: var(--rose);
+    background: var(--rose-light);
+    transform: translateX(4px);
+  }
+  .choice-btn:active { transform: translateX(2px) scale(0.99); }
+  .choice-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    min-width: 20px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2px 6px;
+    text-align: center;
+  }
+  .choice-btn:hover .choice-num {
+    border-color: var(--rose);
+    color: var(--rose-dark);
+  }
+
+  /* ── ENDING ── */
+  .ending-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    animation: fadeUp 0.5s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ending-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .ending-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+  .ending-text {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 1.5rem;
+  }
+  .ending-score {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .restart-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 12px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .restart-btn:hover { background: var(--rose-dark); transform: scale(1.02); }
+
+  /* ── CARD COLLECTION SECTION ── */
+  #card-section {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .clue-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0.4;
+    transition: opacity 0.4s, border-color 0.4s;
+  }
+  .clue-card.found {
+    opacity: 1;
+    border-color: var(--rose);
+  }
+  .clue-card .card-icon { font-size: 1.6rem; margin-bottom: 6px; }
+  .clue-card .card-name { font-size: 11px; color: var(--ink); font-weight: 500; }
+  .clue-card .card-num {
+    font-size: 10px;
+    color: var(--rose);
+    font-weight: 600;
+    display: none;
+  }
+  .clue-card.found .card-num { display: block; }
+
+  @media (max-width: 480px) {
+    #game { padding: 1.25rem 1rem 3rem; }
+    .scene-text { font-size: 1rem; }
+    .cards-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <svg class="intro-eye" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="40" rx="36" ry="22" stroke="#C8556A" stroke-width="1.5"/>
+    <circle cx="40" cy="40" r="13" stroke="#C9A84C" stroke-width="1.5"/>
+    <circle cx="40" cy="40" r="6" fill="#C8556A"/>
+    <circle cx="44" cy="37" r="2" fill="white" opacity="0.6"/>
+  </svg>
+  <div class="intro-title">Глазами<br>правды</div>
+  <div class="intro-sub">Детективная игра</div>
+  <button class="start-btn" onclick="startGame()">Начать расследование</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="game-header">
+    <h1>Глазами правды</h1>
+    <div class="date-line">12 марта 2026 · 4:47 утра · Анна начинает расследование</div>
+  </div>
+
+  <div class="clue-bar">
+    <span class="clue-label">Улики</span>
+    <div class="clue-dots" id="dots"></div>
+    <span class="clue-count" id="clue-count">0 / 7</span>
+  </div>
+
+  <div id="feedback"></div>
+  <div id="scene-area"></div>
+
+  <div id="card-section">
+    <div class="section-label">Собранные улики</div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+</div>
+
+<script>
+const CLUE_CARDS = [
+  { id:'photo',   icon:'📸', name:'Фото браслета',         hint:'Гравировка «Лена, ты мой свет»' },
+  { id:'check',   icon:'🧾', name:'Чек из ювелирного',     hint:'Оплата 3 недели назад' },
+  { id:'note',    icon:'💌', name:'Записка «Твоя Л.»',     hint:'Найдена в кармане куртки' },
+  { id:'boots',   icon:'👢', name:'Сапоги 37-го размера',  hint:'Чужая обувь в прихожей' },
+  { id:'screen',  icon:'📱', name:'Скрины переписки',      hint:'Телефон остался дома' },
+  { id:'clip',    icon:'🖇️', name:'Заколка в спальне',    hint:'Не твоя. Светлый волос.' },
+  { id:'insta',   icon:'📷', name:'Instagram Лены',        hint:'Браслет на последнем фото' },
+];
+
+const found = new Set();
+let clues = 0;
+const MAX = 7;
+
+const scenes = {
+  1: {
+    tag: 'Сцена 1 · Ночь. Браслет',
+    text: 'Анна просыпается в 4:47. Дима ушёл в туалет. На тумбочке лежит серебряный браслет с гравировкой: «Лена, ты мой свет в окошке».\n\nЧто ты делаешь?',
+    choices: [
+      { text:'Фотографирую браслет', next:2, cards:['photo'], fb:'Фото сохранено — это первая улика' },
+      { text:'Кладу на место и делаю вид, что сплю', next:2, cards:[], fb:null },
+      { text:'Бужу Диму прямо сейчас', next:'bad1', cards:[], fb:null },
+      { text:'Пытаюсь разблокировать его телефон', next:2, cards:[], fb:'Телефон заблокирован — пароль изменён' },
+    ]
+  },
+  2: {
+    tag: 'Сцена 2 · Телефон и куртка',
+    text: 'Телефон Димы не открывается — пароль изменён. Дима вернулся, лёг, заснул. Ты идёшь в прихожую. Его куртка.',
+    choices: [
+      { text:'Проверяю карманы куртки', next:3, cards:['check','note'], fb:'Чек из ювелирного и записка «Твоя Л.» — +2 улики' },
+      { text:'Смотрю обувь в прихожей', next:3, cards:['boots'], fb:'Чужие сапоги 37-го — +1 улика' },
+      { text:'Звоню Наташе, советуюсь', next:3, cards:[], fb:'Наташа советует ждать до утра' },
+    ]
+  },
+  3: {
+    tag: 'Сцена 3 · Звонок Наташе',
+    text: 'Наташа выслушала тебя. Она говорит: «Не делай глупостей. Спрячь всё, что нашла. Я буду у тебя к 12 дня». Утро.',
+    choices: [
+      { text:'Хорошо, жду утра →', next:4, cards:[], fb:null },
+    ]
+  },
+  4: {
+    tag: 'Сцена 4 · Утро. Дима ушёл',
+    text: 'Дима ушёл на работу и забыл телефон дома. У тебя несколько часов. Что ты делаешь?',
+    choices: [
+      { text:'Разблокирую телефон — угадываю пароль', next:5, cards:['screen'], fb:'Переписка открыта — скриншоты сделаны +1 улика' },
+      { text:'Тщательно осматриваю спальню', next:5, cards:['clip'], fb:'Заколка и чужой волос — +1 улика' },
+      { text:'Ищу «Лену» в Instagram', next:5, cards:['insta'], fb:'Нашла профиль. На фото — тот самый браслет +1 улика' },
+    ]
+  },
+  5: {
+    tag: 'Сцена 5 · Вечер. Разговор',
+    text: 'Дима вернулся. Улики на столе. Он смотрит и молчит. Потом говорит: «Это не то, что ты думаешь».\n\nЧто ты требуешь?',
+    choices: [
+      { text:'Спокойно: квартира и машина остаются мне', next:'good', cards:[], fb:null },
+      { text:'Эмоционально — слёзы и крик', next:'mid', cards:[], fb:null },
+      { text:'Молча ухожу — найду другого', next:'bad2', cards:[], fb:null },
+    ]
+  }
+};
+
+const endings = {
+  bad1: { icon:'😔', title:'Слишком рано', text:'Дима всё отрицал. Без улик ты осталась ни с чем. Иногда нужно подождать, чтобы победить.', color:'#F09595' },
+  good:  { icon:'⚖️', title:'Свобода', text:'Адвокат улыбнулась, увидев твою папку с уликами. Квартира и машина остались за тобой. Ты выиграла.', color:'#97C459' },
+  mid:   { icon:'🤝', title:'Спорный развод', text:'Он воспользовался твоими эмоциями. Делите всё пополам. Больно — но ты вышла из этого.', color:'#FAC775' },
+  bad2:  { icon:'💔', title:'Горькая потеря', text:'Пока ты думала о будущем, он забрал настоящее. Решения в злости редко бывают выгодными.', color:'#F09595' },
+};
+
+function initUI() {
+  // dots
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.id = 'dot-'+i;
+    dotsEl.appendChild(d);
+  }
+  // cards
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+  CLUE_CARDS.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'clue-card'; el.id = 'card-'+c.id;
+    el.innerHTML = `<div class="card-icon">${c.icon}</div><div class="card-name">${c.name}</div><div class="card-num">УЛИКА</div>`;
+    el.title = c.hint;
+    grid.appendChild(el);
+  });
+}
+
+function updateDots() {
+  document.getElementById('clue-count').textContent = clues + ' / ' + MAX;
+  for (let i = 0; i < MAX; i++) {
+    document.getElementById('dot-'+i).className = 'dot' + (i < clues ? ' active' : '');
+  }
+}
+
+function revealCards(ids) {
+  ids.forEach(id => {
+    if (!found.has(id)) {
+      found.add(id);
+      const el = document.getElementById('card-'+id);
+      if (el) { el.classList.add('found'); }
+      clues = Math.min(MAX, clues + 1);
+    }
+  });
+  updateDots();
+}
+
+function showFeedback(msg) {
+  const fb = document.getElementById('feedback');
+  if (!msg) { fb.classList.remove('show'); return; }
+  fb.textContent = msg;
+  fb.classList.add('show');
+  setTimeout(() => fb.classList.remove('show'), 3000);
+}
+
+function renderScene(id) {
+  const s = scenes[id];
+  if (!s) return;
+  const area = document.getElementById('scene-area');
+  let html = `<div class="scene-card">
+    <div class="scene-tag">${s.tag}</div>
+    <div class="scene-text">${s.text.replace(/\n/g,'<br>')}</div>
+  </div>
+  <div class="choices">`;
+  s.choices.forEach((c, i) => {
+    html += `<button class="choice-btn" onclick="choose(${id},${i})">
+      <span class="choice-num">${i+1}</span>${c.text}
+    </button>`;
+  });
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function choose(sceneId, idx) {
+  const c = scenes[sceneId].choices[idx];
+  if (c.cards && c.cards.length) revealCards(c.cards);
+  if (c.fb) showFeedback(c.fb);
+  const next = c.next;
+  setTimeout(() => {
+    if (typeof next === 'string' && endings[next]) renderEnding(next);
+    else renderScene(next);
+    document.getElementById('scene-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, c.fb ? 500 : 0);
+}
+
+function renderEnding(id) {
+  const e = endings[id];
+  const area = document.getElementById('scene-area');
+  const verdict = clues >= 5 ? '✨ Отличный результат' : clues >= 3 ? '👍 Средний результат' : '😞 Мало улик';
+  area.innerHTML = `<div class="ending-card">
+    <div class="ending-icon">${e.icon}</div>
+    <div class="ending-title">${e.title}</div>
+    <div class="ending-text">${e.text}</div>
+    <div class="ending-score">Улик: ${clues} из ${MAX} · ${verdict}</div><br>
+    <button class="restart-btn" onclick="restartGame()">Сыграть снова</button>
+  </div>`;
+}
+
+function startGame() {
+  document.getElementById('intro').classList.add('hidden');
+  const game = document.getElementById('game');
+  game.classList.add('visible');
+  initUI();
+  renderScene(1);
+}
+
+function restartGame() {
+  clues = 0; found.clear();
+  initUI(); updateDots();
+  document.getElementById('feedback').classList.remove('show');
+  renderScene(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
