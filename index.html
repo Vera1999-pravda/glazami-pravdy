@@ -46,36 +46,68 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     z-index: 100;
+    padding: 2rem 1.5rem;
     transition: opacity 0.8s;
   }
   #intro.hidden { opacity: 0; pointer-events: none; }
 
   .intro-eye {
-    width: 80px; height: 80px;
-    margin-bottom: 2rem;
-    animation: blink 3s ease-in-out infinite;
+    width: 140px; height: 90px;
+    margin-bottom: 1.8rem;
+    transform-origin: center;
+    animation: blink 4.5s ease-in-out infinite;
   }
   @keyframes blink {
-    0%,90%,100% { transform: scaleY(1); }
-    95% { transform: scaleY(0.05); }
+    0%, 88%, 100% { transform: scaleY(1); }
+    92% { transform: scaleY(0.08); }
+    94% { transform: scaleY(1); }
+  }
+  .intro-eye .iris-shimmer {
+    transform-origin: 60px 45px;
+    animation: shimmer 6s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
   }
 
   .intro-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
     font-weight: 400;
     color: var(--cream);
     letter-spacing: 0.08em;
     text-align: center;
+    line-height: 1;
     margin-bottom: 0.5rem;
   }
   .intro-sub {
-    font-size: 13px;
-    letter-spacing: 0.2em;
+    font-size: 12px;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--gold);
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
   }
+
+  .prologue {
+    max-width: 480px;
+    text-align: center;
+    margin-bottom: 2rem;
+    min-height: 240px;
+  }
+  .prologue p + p { margin-top: 1rem; }
+  .prologue p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.05rem, 3vw, 1.25rem);
+    line-height: 1.7;
+    color: var(--cream);
+    opacity: 0;
+    transition: opacity 1.4s ease-in;
+  }
+  .prologue p.visible { opacity: 0.92; }
+
   .start-btn {
     border: 1px solid var(--rose);
     background: transparent;
@@ -84,13 +116,209 @@
     font-size: 13px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    padding: 14px 40px;
+    padding: 14px 36px;
     cursor: pointer;
-    transition: all 0.25s;
+    transition: all 0.25s, opacity 0.6s;
+    opacity: 0;
   }
+  .start-btn.show { opacity: 1; }
   .start-btn:hover {
     background: var(--rose);
     color: var(--cream);
+  }
+  .back-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .back-btn:hover {
+    border-color: var(--rose);
+    color: var(--rose-dark);
+    background: var(--rose-light);
+  }
+  .back-btn-center {
+    display: block;
+    margin: 1rem auto 0;
+  }
+
+  /* ── BRIEFING SCREEN ── */
+  #briefing {
+    position: fixed; inset: 0;
+    background: var(--ink);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 90;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+    animation: briefingFade 0.6s ease;
+  }
+  #briefing.visible { display: flex; }
+  @keyframes briefingFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .briefing-card {
+    background: var(--cream);
+    border-radius: 6px;
+    max-width: 560px;
+    width: 100%;
+    padding: 2rem 1.75rem 2.25rem;
+    position: relative;
+    overflow: hidden;
+    margin: auto 0;
+  }
+  .briefing-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+  }
+  .briefing-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .briefing-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    text-align: center;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+    letter-spacing: 0.04em;
+  }
+  .section-heading {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .characters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+  }
+  .character {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .char-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+  .char-anna { background: var(--rose); }
+  .char-dima { background: var(--ink); }
+  .char-nat  { background: var(--gold); color: var(--ink); }
+  .char-other { background: var(--cream); color: var(--muted); border: 1px dashed var(--border); }
+  .char-info { flex: 1; padding-top: 2px; }
+  .char-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .char-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .rules-list {
+    list-style: none;
+    margin-bottom: 1.75rem;
+  }
+  .rules-list li {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 0.65rem;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .rule-icon {
+    color: var(--rose);
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .anna-identity {
+    background: var(--rose-light);
+    border-left: 3px solid var(--rose);
+    border-radius: 0 4px 4px 0;
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+  .anna-identity p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .anna-identity strong {
+    font-weight: 600;
+    color: var(--rose-dark);
+  }
+  .anna-identity em {
+    font-style: italic;
+    color: var(--rose-dark);
+  }
+  .goal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .goal-text em {
+    font-style: italic;
+    color: var(--rose-dark);
+  }
+  .briefing-btn {
+    display: block;
+    width: 100%;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 14px 24px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .briefing-btn:hover {
+    background: var(--rose-dark);
+    transform: scale(1.01);
   }
 
   /* ── GAME WRAPPER ── */
@@ -142,9 +370,7 @@
     color: var(--muted);
     white-space: nowrap;
   }
-  .clue-dots {
-    display: flex; gap: 6px; flex: 1;
-  }
+  .clue-dots { display: flex; gap: 6px; flex: 1; }
   .dot {
     width: 16px; height: 16px;
     border-radius: 50%;
@@ -183,8 +409,53 @@
     opacity: 0;
     transition: opacity 0.3s, transform 0.3s;
   }
-  #feedback.show {
-    opacity: 1; transform: translateY(0);
+  #feedback.show { opacity: 1; transform: translateY(0); }
+
+  /* ── RESULT PANEL (rich narrative reply) ── */
+  .result-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--rose);
+    border-radius: 0 4px 4px 0;
+    padding: 1.5rem 1.4rem 1.25rem;
+    margin-top: 0.5rem;
+    animation: sceneFade 0.5s ease;
+  }
+  .result-meta {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 500;
+    margin-bottom: 0.85rem;
+  }
+  .result-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  .result-text em {
+    font-style: italic;
+    color: var(--rose-dark);
+  }
+  .continue-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 11px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .continue-btn:hover {
+    background: var(--rose-dark);
+    transform: scale(1.02);
   }
 
   /* ── SCENE CARD ── */
@@ -196,6 +467,11 @@
     margin-bottom: 1.25rem;
     position: relative;
     overflow: hidden;
+    animation: sceneFade 0.5s ease;
+  }
+  @keyframes sceneFade {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   .scene-card::before {
     content: '';
@@ -217,6 +493,20 @@
     font-size: 1.15rem;
     line-height: 1.75;
     color: var(--ink);
+  }
+  .scene-text em {
+    color: var(--rose-dark);
+    font-style: italic;
+  }
+  .scene-prompt {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-transform: uppercase;
   }
 
   /* ── CHOICES ── */
@@ -264,26 +554,40 @@
     border-radius: 4px;
     padding: 2.5rem 2rem;
     text-align: center;
-    animation: fadeUp 0.5s ease;
+    animation: fadeUp 0.6s ease;
   }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .ending-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .ending-icon { font-size: 2.6rem; margin-bottom: 0.5rem; }
   .ending-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+    font-size: 1.9rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .ending-when {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
   }
   .ending-text {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    max-width: 420px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    line-height: 1.85;
+    max-width: 460px;
     margin: 0 auto 1.5rem;
+    text-align: left;
+  }
+  .ending-text em {
+    color: var(--rose-dark);
+    font-style: italic;
   }
   .ending-score {
     display: inline-block;
@@ -292,7 +596,7 @@
     padding: 6px 20px;
     font-size: 13px;
     color: var(--muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
   .restart-btn {
     background: var(--ink);
@@ -308,6 +612,281 @@
     transition: background 0.2s, transform 0.15s;
   }
   .restart-btn:hover { background: var(--rose-dark); transform: scale(1.02); }
+
+  /* ── VIP CTA ── */
+  .vip-cta {
+    margin-top: 2rem;
+    padding: 1.75rem 1.5rem;
+    background: var(--ink);
+    border-radius: 4px;
+    text-align: center;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+  .vip-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--rose));
+  }
+  .vip-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .vip-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--cream);
+    margin-bottom: 1.25rem;
+  }
+  .vip-btn {
+    background: var(--rose);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 12px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .vip-btn:hover {
+    background: var(--rose-dark);
+    transform: scale(1.02);
+  }
+  .vip-fineprint {
+    margin-top: 0.85rem;
+    font-size: 11px;
+    color: rgba(245, 237, 213, 0.55);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── EVIDENCE VISUALS (фото-улики в стиле дела) ── */
+  .evidence {
+    background: #FFFEF7;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
+    padding: 12px;
+    margin: 1.25rem auto;
+    max-width: 320px;
+    position: relative;
+    animation: evidenceReveal 0.7s ease;
+  }
+  @keyframes evidenceReveal {
+    from { opacity: 0; transform: translateY(15px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .evidence::before {
+    content: 'УЛИКА';
+    position: absolute;
+    top: -8px; right: 14px;
+    background: var(--rose);
+    color: var(--cream);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+    z-index: 2;
+  }
+  .evidence-caption {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'Jost', sans-serif;
+  }
+
+  /* Браслет — стилизованное фото */
+  .evidence-photo { transform: rotate(-2.8deg); padding: 10px 10px 8px; background: #1a1a1a; }
+  .evidence-photo .evidence-caption { color: var(--muted); }
+  .evidence-photo svg { width: 100%; height: auto; display: block; border-radius: 2px; }
+
+  /* Чек из ювелирного */
+  .evidence-receipt {
+    transform: rotate(0.6deg);
+    font-family: 'Courier New', 'Courier', monospace;
+    background: #FAF6EA;
+    background-image:
+      linear-gradient(90deg, transparent 0, transparent 100%),
+      repeating-linear-gradient(0deg, rgba(28,20,16,0.02), rgba(28,20,16,0.02) 1px, transparent 1px, transparent 3px);
+    padding: 18px 16px;
+    max-width: 270px;
+    font-size: 11.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: #2a2422;
+    text-align: center;
+  }
+  .evidence-receipt .receipt-total {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Записка от руки */
+  .evidence-note {
+    transform: rotate(-2deg);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    padding: 28px 26px 24px;
+    background: #FFFCEF;
+    font-size: 1.08rem;
+    line-height: 1.85;
+    color: #3a2c20;
+    max-width: 300px;
+  }
+  .evidence-note::after {
+    content: '';
+    position: absolute;
+    top: -10px; left: 50%;
+    width: 70px; height: 16px;
+    background: rgba(201, 168, 76, 0.35);
+    transform: translateX(-50%) rotate(-3deg);
+    border-radius: 1px;
+  }
+  .evidence-note .note-signature {
+    display: block;
+    text-align: right;
+    margin-top: 14px;
+    font-size: 1.2rem;
+    color: var(--rose-dark);
+  }
+
+  /* Telegram-переписка */
+  .evidence-telegram {
+    background: #17212B;
+    padding: 0;
+    overflow: hidden;
+    max-width: 320px;
+    font-family: -apple-system, system-ui, sans-serif;
+    transform: rotate(0deg);
+  }
+  .evidence-telegram .evidence-caption { color: var(--muted); padding: 8px; margin: 0; }
+  .tg-header {
+    background: #242F3D;
+    color: #FFFFFF;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tg-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C8556A, #8B2A3A);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 600;
+  }
+  .tg-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #0E1621;
+    min-height: 120px;
+  }
+  .tg-msg {
+    max-width: 78%;
+    padding: 7px 10px 6px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    position: relative;
+  }
+  .tg-msg.me {
+    align-self: flex-end;
+    background: #2B5278;
+    color: #FFFFFF;
+    border-radius: 10px 10px 2px 10px;
+  }
+  .tg-msg.them {
+    align-self: flex-start;
+    background: #182533;
+    color: #FFFFFF;
+    border-radius: 10px 10px 10px 2px;
+  }
+  .tg-time {
+    font-size: 9px;
+    opacity: 0.55;
+    margin-left: 6px;
+  }
+
+  /* Instagram-пост */
+  .evidence-instagram {
+    background: #FFFFFF;
+    border: 1px solid #DBDBDB;
+    border-radius: 8px;
+    max-width: 300px;
+    padding: 0;
+    overflow: hidden;
+    transform: rotate(0deg);
+  }
+  .evidence-instagram .evidence-caption { padding: 8px; margin: 0; }
+  .ig-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #EFEFEF;
+    gap: 10px;
+  }
+  .ig-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #bc1888);
+    padding: 2px;
+  }
+  .ig-avatar-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: #FFE4B5;
+    display: flex; align-items: center; justify-content: center;
+    color: #5a3020;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .ig-username { font-size: 13px; font-weight: 600; color: #000; flex: 1; }
+  .ig-image { display: block; }
+  .ig-image svg { width: 100%; height: auto; display: block; }
+  .ig-actions {
+    padding: 8px 12px 4px;
+    color: #000;
+    font-size: 18px;
+    letter-spacing: 8px;
+  }
+  .ig-likes {
+    padding: 0 12px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+  }
+  .ig-caption {
+    padding: 0 12px 8px;
+    font-size: 13px;
+    color: #000;
+    line-height: 1.4;
+  }
+  .ig-caption strong { font-weight: 600; }
+  .ig-comment {
+    padding: 0 12px 10px;
+    font-size: 13px;
+    color: #000;
+  }
+  .ig-comment strong { font-weight: 600; }
 
   /* ── CARD COLLECTION SECTION ── */
   #card-section {
@@ -355,6 +934,7 @@
   @media (max-width: 480px) {
     #game { padding: 1.25rem 1rem 3rem; }
     .scene-text { font-size: 1rem; }
+    .ending-text { font-size: 1rem; }
     .cards-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
@@ -363,22 +943,131 @@
 
 <!-- INTRO -->
 <div id="intro">
-  <svg class="intro-eye" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="40" cy="40" rx="36" ry="22" stroke="#C8556A" stroke-width="1.5"/>
-    <circle cx="40" cy="40" r="13" stroke="#C9A84C" stroke-width="1.5"/>
-    <circle cx="40" cy="40" r="6" fill="#C8556A"/>
-    <circle cx="44" cy="37" r="2" fill="white" opacity="0.6"/>
+  <svg class="intro-eye" viewBox="0 0 140 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="iris-grad" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#F5EDD5"/>
+        <stop offset="35%" stop-color="#C9A84C"/>
+        <stop offset="85%" stop-color="#8B2A3A"/>
+        <stop offset="100%" stop-color="#5a1822"/>
+      </radialGradient>
+      <radialGradient id="iris-rays" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#C9A84C" stop-opacity="0"/>
+        <stop offset="60%" stop-color="#C9A84C" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#1C1410" stop-opacity="0.35"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Brow -->
+    <path d="M 22 16 Q 60 6 102 16" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" opacity="0.7" fill="none"/>
+
+    <!-- Top lashes -->
+    <path d="M 24 30 L 20 22" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <path d="M 34 24 L 32 14" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M 46 20 L 46 10" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 60 18 L 60 8" stroke="#FAF6F0" stroke-width="1.3" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 74 20 L 74 10" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 86 24 L 88 14" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M 96 30 L 100 22" stroke="#FAF6F0" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+
+    <!-- Eye almond outline -->
+    <path d="M 12 45 Q 60 18 108 45 Q 60 72 12 45 Z" stroke="#FAF6F0" stroke-width="1.8" fill="none"/>
+
+    <!-- Iris -->
+    <g class="iris-shimmer">
+      <circle cx="60" cy="45" r="20" fill="url(#iris-grad)"/>
+      <circle cx="60" cy="45" r="20" fill="url(#iris-rays)"/>
+    </g>
+
+    <!-- Iris detail rays -->
+    <line x1="60" y1="27" x2="60" y2="32" stroke="#5a1822" stroke-width="0.6" opacity="0.5"/>
+    <line x1="78" y1="45" x2="73" y2="45" stroke="#5a1822" stroke-width="0.6" opacity="0.5"/>
+    <line x1="42" y1="45" x2="47" y2="45" stroke="#5a1822" stroke-width="0.6" opacity="0.5"/>
+    <line x1="60" y1="58" x2="60" y2="63" stroke="#5a1822" stroke-width="0.6" opacity="0.5"/>
+
+    <!-- Pupil -->
+    <circle cx="60" cy="45" r="9" fill="#1C1410"/>
+
+    <!-- Highlights -->
+    <ellipse cx="65" cy="40" rx="3.5" ry="2.5" fill="#FAF6F0" opacity="0.95"/>
+    <circle cx="55" cy="49" r="1.5" fill="#FAF6F0" opacity="0.55"/>
+
+    <!-- Bottom lash hint -->
+    <path d="M 30 60 Q 60 68 90 60" stroke="#FAF6F0" stroke-width="0.8" opacity="0.4" fill="none"/>
+
+    <!-- Tear at corner -->
+    <circle cx="14" cy="46" r="1.3" fill="#C8556A" opacity="0.7"/>
   </svg>
   <div class="intro-title">Глазами<br>правды</div>
-  <div class="intro-sub">Детективная игра</div>
-  <button class="start-btn" onclick="startGame()">Начать расследование</button>
+  <div class="intro-sub">История Анны · Дело № 1</div>
+
+  <div class="prologue" id="prologue">
+    <p id="p1">Семь лет вместе. Год — в браке.</p>
+    <p id="p2">Вчера он сказал, что влюблён в каждую клетку моего тела, в мою душу. Я подумала: как же мне повезло — я чувствовала то же самое.</p>
+    <p id="p3">А в 4:47 утра я проснулась. Сердце забилось, давление упало — будто паническая атака. Я ещё не знала, что увижу.</p>
+  </div>
+
+  <button class="start-btn" id="startBtn" onclick="startGame()">Начать расследование</button>
+</div>
+
+<!-- BRIEFING -->
+<div id="briefing">
+  <div class="briefing-card">
+    <div class="briefing-label">Брифинг · Дело № 1</div>
+    <h2 class="briefing-title">Перед тем как начать</h2>
+
+    <div class="section-heading">Кто вы</div>
+    <div class="anna-identity">
+      <p>Ты — <strong>Анна Морозова</strong>. Ты не детектив. Ты женщина, которая чувствует, что брак рушится. У тебя нет допуска к базам данных, нет камер слежки. У тебя есть только <em>твоя наблюдательность, твой телефон и подруга Наташа</em>, которая работает в IT.</p>
+    </div>
+
+    <div class="section-heading">Кто рядом</div>
+    <div class="characters">
+      <div class="character">
+        <div class="char-avatar char-dima">Д</div>
+        <div class="char-info">
+          <div class="char-name">Дима</div>
+          <div class="char-desc">Муж, 35 лет. Юрист. Внимательный, обаятельный. Вчера говорил, что любит вас в каждой клетке.</div>
+        </div>
+      </div>
+      <div class="character">
+        <div class="char-avatar char-nat">Н</div>
+        <div class="char-info">
+          <div class="char-name">Наташа</div>
+          <div class="char-desc">Лучшая подруга. Работает в IT — может посмотреть то, что не видит обычный человек. Прямая, циничная, преданная.</div>
+        </div>
+      </div>
+      <div class="character">
+        <div class="char-avatar char-other">?</div>
+        <div class="char-info">
+          <div class="char-name">Другие появятся по ходу</div>
+          <div class="char-desc">Соседка, секретарь Димы, неожиданная незнакомка. Не все из них — те, кем кажутся.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading">Цель игры</div>
+    <p class="goal-text">Собрать достаточно улик, чтобы понять: <em>измена есть или нет?</em> Если да — с кем? И что делать дальше.</p>
+
+    <div class="section-heading">Как играем</div>
+    <ul class="rules-list">
+      <li><span class="rule-icon">●</span>Вы говорите, что делаете («фотографирую браслет», «проверяю карманы», «звоню Наташе»)</li>
+      <li><span class="rule-icon">●</span>Игра даёт результат: улику, разговор, новую зацепку — или тупик</li>
+      <li><span class="rule-icon">●</span>Вы решаете, что делать дальше</li>
+      <li><span class="rule-icon">●</span>20 сцен. 5 возможных концовок. 30–45 минут на прохождение</li>
+      <li><span class="rule-icon">●</span>Не каждый след ведёт к правде. Не каждое подозрение оправдано. Не верьте сразу никому</li>
+    </ul>
+
+    <button class="briefing-btn" onclick="enterGame()">Войти в дело →</button>
+    <button class="back-btn back-btn-center" onclick="backToIntro()">← Вернуться к вступлению</button>
+  </div>
 </div>
 
 <!-- GAME -->
 <div id="game">
   <div class="game-header">
     <h1>Глазами правды</h1>
-    <div class="date-line">12 марта 2026 · 4:47 утра · Анна начинает расследование</div>
+    <div class="date-line">12 марта 2026 · Дело Анны</div>
   </div>
 
   <div class="clue-bar">
@@ -398,75 +1087,495 @@
 
 <script>
 const CLUE_CARDS = [
-  { id:'photo',   icon:'📸', name:'Фото браслета',         hint:'Гравировка «Лена, ты мой свет»' },
-  { id:'check',   icon:'🧾', name:'Чек из ювелирного',     hint:'Оплата 3 недели назад' },
-  { id:'note',    icon:'💌', name:'Записка «Твоя Л.»',     hint:'Найдена в кармане куртки' },
-  { id:'boots',   icon:'👢', name:'Сапоги 37-го размера',  hint:'Чужая обувь в прихожей' },
-  { id:'screen',  icon:'📱', name:'Скрины переписки',      hint:'Телефон остался дома' },
-  { id:'clip',    icon:'🖇️', name:'Заколка в спальне',    hint:'Не твоя. Светлый волос.' },
-  { id:'insta',   icon:'📷', name:'Instagram Лены',        hint:'Браслет на последнем фото' },
+  { id:'photo',    icon:'📸', name:'Фото браслета',          hint:'Гравировка «Лена, ты мой свет»' },
+  { id:'check',    icon:'🧾', name:'Чек из «Злато»',          hint:'10 ноября 2025, 7 490 ₽' },
+  { id:'note',     icon:'💌', name:'Записка «Твоя Л.»',      hint:'В кармане куртки' },
+  { id:'boots',    icon:'👢', name:'Сапоги 37-го размера',   hint:'Чужая обувь у двери' },
+  { id:'bathroom', icon:'💄', name:'Помада и парфюм',         hint:'Розовая помада, Tom Ford в ванной' },
+  { id:'ksenia',   icon:'💼', name:'Ксения покрывает',       hint:'Поддельные командировки' },
+  { id:'sasha',    icon:'🎲', name:'Саша подтверждает',       hint:'«Покера в субботу не было»' },
+  { id:'screen',   icon:'📱', name:'Скрины переписки',       hint:'6 месяцев в Telegram' },
+  { id:'clip',     icon:'🖇️', name:'Заколка в спальне',     hint:'Светлый длинный волос' },
+  { id:'insta',    icon:'📷', name:'Instagram Лены',         hint:'Браслет на последнем фото' },
+  { id:'engaged',  icon:'💍', name:'Помолвка Лены',          hint:'Она помолвлена с другим' },
+  { id:'truth',    icon:'⚖️', name:'Признание Лены',          hint:'«Я не знала, что он женат»' },
+  { id:'jewelry',  icon:'💎', name:'Жювелир узнал Диму',     hint:'5 покупок, кольцо в феврале' },
+  { id:'mom',      icon:'👩‍🦳', name:'Свекровь обманута',     hint:'Дима представил Лену матери' },
+  { id:'lawyer',   icon:'⚖️', name:'Юрист готов',             hint:'48 часов на раздел имущества' },
 ];
 
 const found = new Set();
 let clues = 0;
-const MAX = 7;
+const MAX = 15;
+
+// Визуальные карточки улик — то, что игрок увидит, когда находит улику
+const EVIDENCE_VISUALS = {
+  photo: `<div class="evidence evidence-photo">
+    <svg viewBox="0 0 280 210" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="silverChain" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#E0E0E8"/>
+          <stop offset="50%" stop-color="#A8A8B2"/>
+          <stop offset="100%" stop-color="#48484E"/>
+        </linearGradient>
+        <radialGradient id="pendantSilver" cx="35%" cy="28%" r="80%">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="35%" stop-color="#D5D5DD"/>
+          <stop offset="100%" stop-color="#404048"/>
+        </radialGradient>
+        <radialGradient id="flashLight" cx="50%" cy="48%" r="55%">
+          <stop offset="0%" stop-color="#FFE8B0" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="#8C5A2E" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+          <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0.65"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Dark wooden nightstand (ночь) -->
+      <rect width="280" height="210" fill="#1c100a"/>
+
+      <!-- Wood grain hints -->
+      <g stroke="#0a0604" stroke-width="0.5" opacity="0.7">
+        <path d="M 0 38 Q 140 35 280 42" fill="none"/>
+        <path d="M 0 95 Q 140 100 280 92" fill="none"/>
+        <path d="M 0 155 Q 140 158 280 152" fill="none"/>
+        <path d="M 0 185 Q 140 182 280 188" fill="none"/>
+      </g>
+
+      <!-- Warm flash light pool from phone -->
+      <circle cx="140" cy="105" r="120" fill="url(#flashLight)"/>
+
+      <!-- Soft shadow under bracelet (more dramatic, low light) -->
+      <ellipse cx="140" cy="172" rx="100" ry="6" fill="#000" opacity="0.55"/>
+
+      <!-- Bracelet chain — slightly off-center (shaky hands) -->
+      <path d="M 38 58 Q 92 58 125 132 Q 140 152 156 132 Q 192 58 246 58"
+            stroke="url(#silverChain)" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+      <!-- Chain link texture -->
+      <path d="M 38 58 Q 92 58 125 132 Q 140 152 156 132 Q 192 58 246 58"
+            stroke="#0a0608" stroke-width="5" fill="none" stroke-linecap="butt"
+            stroke-dasharray="0.6 3.6" opacity="0.55"/>
+
+      <!-- Top highlight (catches flash) -->
+      <path d="M 38 55 Q 92 55 124 130 Q 140 149 156 130 Q 192 55 246 55"
+            stroke="#FFFFFF" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.75"/>
+
+      <!-- Pendant suspension ring -->
+      <circle cx="140" cy="148" r="3.5" fill="none" stroke="#a0a0a8" stroke-width="1.3"/>
+
+      <!-- Sun pendant -->
+      <g transform="translate(140, 170)">
+        <!-- Main rays — bright silver -->
+        <g stroke="#D0D0D8" stroke-width="2" stroke-linecap="round">
+          <line x1="0" y1="-22" x2="0" y2="-31"/>
+          <line x1="15.5" y1="-15.5" x2="21.5" y2="-21.5"/>
+          <line x1="22" y1="0" x2="31" y2="0"/>
+          <line x1="15.5" y1="15.5" x2="21.5" y2="21.5"/>
+          <line x1="0" y1="22" x2="0" y2="31"/>
+          <line x1="-15.5" y1="15.5" x2="-21.5" y2="21.5"/>
+          <line x1="-22" y1="0" x2="-31" y2="0"/>
+          <line x1="-15.5" y1="-15.5" x2="-21.5" y2="-21.5"/>
+        </g>
+        <!-- Small rays in between -->
+        <g stroke="#A8A8B0" stroke-width="1.1" stroke-linecap="round">
+          <line x1="9" y1="-21" x2="13" y2="-28"/>
+          <line x1="21" y1="-9" x2="28" y2="-13"/>
+          <line x1="21" y1="9" x2="28" y2="13"/>
+          <line x1="9" y1="21" x2="13" y2="28"/>
+          <line x1="-9" y1="21" x2="-13" y2="28"/>
+          <line x1="-21" y1="9" x2="-28" y2="13"/>
+          <line x1="-21" y1="-9" x2="-28" y2="-13"/>
+          <line x1="-9" y1="-21" x2="-13" y2="-28"/>
+        </g>
+        <!-- Pendant disc -->
+        <circle r="17" fill="url(#pendantSilver)" stroke="#202024" stroke-width="0.8"/>
+        <!-- Inner engraved circle -->
+        <circle r="12" fill="none" stroke="#8a8a92" stroke-width="0.5"/>
+        <!-- Center bead -->
+        <circle r="3.5" fill="#606068"/>
+        <circle r="1.5" fill="#202024"/>
+        <!-- Flash highlights (bright spots from phone light) -->
+        <ellipse cx="-5.5" cy="-7" rx="5.5" ry="3" fill="#FFFFFF" opacity="0.85"/>
+        <ellipse cx="6" cy="6" rx="2" ry="1.2" fill="#FFFFFF" opacity="0.45"/>
+        <!-- Rim light -->
+        <circle r="17" fill="none" stroke="#FFE8B0" stroke-width="0.4" opacity="0.5"/>
+      </g>
+
+      <!-- Vignette overlay -->
+      <rect width="280" height="210" fill="url(#vignette)" pointer-events="none"/>
+
+      <!-- Phone timestamp watermark -->
+      <text x="262" y="200" text-anchor="end" font-family="-apple-system, sans-serif" font-size="8.5" fill="#FFFFFF" opacity="0.55">04:48 · 12.03.2026</text>
+    </svg>
+    <div class="evidence-caption">Снято на телефон · 4:48 утра</div>
+  </div>`,
+
+  check: `<div class="evidence evidence-receipt">     ЮВЕЛИРНЫЙ САЛОН
+        «ЗЛАТО»
+   ТРЦ Москва, 3 этаж
+══════════════════════
+   10.11.2025  14:47
+   Кассир: Ольга К.
+──────────────────────
+   Браслет серебряный
+   Подвеска «Солнце»
+   С гравировкой
+   арт. SLV-7821-G
+──────────────────────
+<span class="receipt-total">   ИТОГО:    7 490 ₽</span>
+   Карта ****1374
+══════════════════════
+   Спасибо за покупку!
+<div class="evidence-caption">Чек из «Злато» · 4 месяца назад</div>
+  </div>`,
+
+  note: `<div class="evidence evidence-note">
+    Димочка, спасибо за вчерашний вечер.<br><br>
+    Я так давно не смеялась.
+    <span class="note-signature">Твоя Л.</span>
+    <div class="evidence-caption">Записка из кармана куртки</div>
+  </div>`,
+
+  screen: `<div class="evidence evidence-telegram">
+    <div class="tg-header"><span class="tg-avatar">Л</span><span>Лена С. ❤️</span></div>
+    <div class="tg-body">
+      <div class="tg-msg them">Скучаю. Когда увидимся?</div>
+      <div class="tg-msg me">Скоро, малыш. Я уже подал на развод <span class="tg-time">14:32 ✓✓</span></div>
+      <div class="tg-msg them">Жена не подозревает?</div>
+      <div class="tg-msg me">Она в депрессии — её нельзя сейчас тревожить. Жди ещё немного <span class="tg-time">14:34 ✓✓</span></div>
+      <div class="tg-msg them">Я тебя так люблю 🤍</div>
+      <div class="tg-msg me">И я тебя. Скоро будем жить вместе <span class="tg-time">14:36 ✓✓</span></div>
+    </div>
+    <div class="evidence-caption">Скриншот переписки</div>
+  </div>`,
+
+  insta: `<div class="evidence evidence-instagram">
+    <div class="ig-header">
+      <div class="ig-avatar"><div class="ig-avatar-inner">Л</div></div>
+      <div class="ig-username">lena_simakova</div>
+      <div style="color:#000;font-size:18px;">⋯</div>
+    </div>
+    <div class="ig-image">
+      <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sea1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFE4B5"/>
+            <stop offset="35%" stop-color="#87CEEB"/>
+            <stop offset="100%" stop-color="#3a6e94"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="220" fill="url(#sea1)"/>
+        <circle cx="215" cy="55" r="20" fill="#FFEAA0" opacity="0.9"/>
+        <path d="M 0 165 Q 75 160 150 168 Q 225 174 300 168 L 300 220 L 0 220 Z" fill="#3a6e94" opacity="0.6"/>
+        <g transform="translate(75, 110)">
+          <ellipse cx="0" cy="-10" rx="14" ry="16" fill="#2a1f1a"/>
+          <path d="M -18 5 Q -22 35 -18 95 L 18 95 Q 22 35 18 5 Q 14 -5 0 -5 Q -14 -5 -18 5 Z" fill="#2a1f1a"/>
+          <path d="M -14 22 Q -18 50 -22 80" stroke="#2a1f1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="-19" cy="40" r="3" fill="#E8E8EE"/>
+          <g transform="translate(-19, 40)" stroke="#999" stroke-width="0.7">
+            <line x1="0" y1="-5" x2="0" y2="-7"/>
+            <line x1="4" y1="-3" x2="6" y2="-4.5"/>
+            <line x1="5" y1="0" x2="7" y2="0"/>
+            <line x1="4" y1="3" x2="6" y2="4.5"/>
+            <line x1="-4" y1="3" x2="-6" y2="4.5"/>
+            <line x1="-5" y1="0" x2="-7" y2="0"/>
+            <line x1="-4" y1="-3" x2="-6" y2="-4.5"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="ig-actions">♡  💬  ↗</div>
+    <div class="ig-likes">❤ 247 нравится</div>
+    <div class="ig-caption"><strong>lena_simakova</strong> Спасибо тому, кто понимает 🌞</div>
+    <div class="ig-comment"><strong>dmorozov</strong> Ты моё всё ❤️</div>
+    <div class="evidence-caption">Instagram Лены · 9 марта</div>
+  </div>`,
+
+  engaged: `<div class="evidence evidence-instagram">
+    <div class="ig-header">
+      <div class="ig-avatar"><div class="ig-avatar-inner">Л</div></div>
+      <div class="ig-username">lena_simakova</div>
+      <div style="color:#000;font-size:18px;">⋯</div>
+    </div>
+    <div class="ig-image">
+      <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sunset" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F4A582"/>
+            <stop offset="50%" stop-color="#E07A6D"/>
+            <stop offset="100%" stop-color="#7B3F60"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="220" fill="url(#sunset)"/>
+        <circle cx="150" cy="135" r="40" fill="#FFD080" opacity="0.6"/>
+        <path d="M 0 175 Q 150 165 300 175 L 300 220 L 0 220 Z" fill="#1a1020" opacity="0.7"/>
+        <g transform="translate(105, 100)">
+          <ellipse cx="0" cy="-5" rx="13" ry="15" fill="#1a1020"/>
+          <path d="M -16 8 L -16 95 L 16 95 L 16 8 Q 12 -2 0 -2 Q -12 -2 -16 8 Z" fill="#1a1020"/>
+        </g>
+        <g transform="translate(175, 100)">
+          <ellipse cx="0" cy="-5" rx="14" ry="16" fill="#1a1020"/>
+          <path d="M -18 8 L -18 95 L 18 95 L 18 8 Q 14 -2 0 -2 Q -14 -2 -18 8 Z" fill="#1a1020"/>
+        </g>
+        <g transform="translate(140, 100)">
+          <circle r="3" fill="#FFE700"/>
+          <circle r="6" fill="none" stroke="#FFE700" stroke-width="0.5" opacity="0.5"/>
+          <line x1="-5" y1="0" x2="5" y2="0" stroke="#FFE700" stroke-width="0.4" opacity="0.6"/>
+          <line x1="0" y1="-5" x2="0" y2="5" stroke="#FFE700" stroke-width="0.4" opacity="0.6"/>
+        </g>
+      </svg>
+    </div>
+    <div class="ig-actions">♡  💬  ↗</div>
+    <div class="ig-likes">❤ 1 247 нравится</div>
+    <div class="ig-caption"><strong>lena_simakova</strong> Сказал да 🤍 #happiestday</div>
+    <div class="ig-comment"><strong>artem_k</strong> Моя 💍 навсегда</div>
+    <div class="evidence-caption">Помолвка с Артёмом · октябрь 2025</div>
+  </div>`
+};
 
 const scenes = {
   1: {
-    tag: 'Сцена 1 · Ночь. Браслет',
-    text: 'Анна просыпается в 4:47. Дима ушёл в туалет. На тумбочке лежит серебряный браслет с гравировкой: «Лена, ты мой свет в окошке».\n\nЧто ты делаешь?',
+    tag: 'Сцена 1 · 12 марта 2026, 4:47 утра · Спальня',
+    text: '12 марта 2026. За окном ещё темно, мартовский ветер бьёт в стекло. Вы прожили с Димой почти девять лет.\n\nТы проснулась от того, что его нет рядом. Через двадцать минут он вернулся — пах кофе, которого не пил. Ты притворилась спящей.\n\nКогда он заснул, ты увидела это.\n\nНа тумбочке, рядом с его телефоном, лежит серебряный браслет. Тонкая цепочка, подвеска в форме солнца. Ты никогда его не видела. <em>Ты не носишь серебро — у тебя аллергия.</em>\n\nТы протягиваешь руку. Берёшь браслет. Подносишь к глазам. На внутренней стороне подвески — гравировка:\n\n<em>«Лена, ты мой свет в окошке»</em>\n\nДима может вернуться в любую секунду.',
+    prompt: 'Что ты делаешь, Анна?',
     choices: [
-      { text:'Фотографирую браслет', next:2, cards:['photo'], fb:'Фото сохранено — это первая улика' },
-      { text:'Кладу на место и делаю вид, что сплю', next:2, cards:[], fb:null },
-      { text:'Бужу Диму прямо сейчас', next:'bad1', cards:[], fb:null },
-      { text:'Пытаюсь разблокировать его телефон', next:2, cards:[], fb:'Телефон заблокирован — пароль изменён' },
+      { text:'Фотографирую браслет, пока он спит', next:2, cards:['photo'], fb:'Ты быстро, но аккуратно достаёшь телефон. Затвор беззвучный — ты давно поставила его в этот режим, когда впервые что-то заподозрила.\n\nТри кадра: общий план, крупно подвеска, крупно гравировка. Фото уходят в скрытую папку.\n\nТы кладёшь браслет точно в то же положение. Под тем же углом. Чтобы он не заметил.\n\n<em>Это уже не наваждение. Это улика.</em>' },
+      { text:'Кладу на место. Притворяюсь, что сплю — нужно подумать', next:2, cards:[], fb:'Ты медленно опускаешь браслет на тумбочку. Тот же угол, та же позиция. Поворачиваешься к стене. Закрываешь глаза. Замедляешь дыхание.\n\nНо не спишь.\n\nВ голове крутится одно слово: <em>Лена</em>.' },
+      { text:'Беру его телефон — пробую старый пароль', next:2, cards:[], fb:'Ты протягиваешь руку. Кладёшь палец на экран. <em>1406</em> — дата вашей первой встречи. Он не менял пароль семь лет.\n\nТелефон вибрирует.\n\n<em>«Неверный пароль. Попробуйте через 5 минут.»</em>\n\nСердце ухает в пятку. Он сменил пароль. Когда?\n\nТы убираешь руку. Лежишь неподвижно. Значит, есть что скрывать. И он знает, что ты можешь проверить.' },
+      { text:'Бужу его. Спрашиваю в лоб: что это?', next:'bad1', cards:[], fb:null },
     ]
   },
   2: {
-    tag: 'Сцена 2 · Телефон и куртка',
-    text: 'Телефон Димы не открывается — пароль изменён. Дима вернулся, лёг, заснул. Ты идёшь в прихожую. Его куртка.',
+    tag: 'Сцена 2 · 5:14 утра · Прихожая',
+    text: 'Дима спит как убитый. Раньше он просыпался от любого шороха — а сейчас даже не шевельнулся, когда ты встала.\n\nТы идёшь в прихожую босиком. Включаешь фонарик на телефоне, прикрывая пальцем, чтобы свет не падал в спальню.\n\nЕго куртка висит на спинке стула. Чёрная, кожаная — та, в которой он вчера вернулся «из офиса в одиннадцать».\n\nТы подносишь её к лицу.\n\n<em>Запах. Сладкий, тяжёлый. Не твой парфюм.</em>',
+    prompt: 'Что проверяешь?',
     choices: [
-      { text:'Проверяю карманы куртки', next:3, cards:['check','note'], fb:'Чек из ювелирного и записка «Твоя Л.» — +2 улики' },
-      { text:'Смотрю обувь в прихожей', next:3, cards:['boots'], fb:'Чужие сапоги 37-го — +1 улика' },
-      { text:'Звоню Наташе, советуюсь', next:3, cards:[], fb:'Наташа советует ждать до утра' },
+      { text:'Лезу в карманы. Все, до последнего', next:3, cards:['check','note'], fb:'В правом кармане — ключи, кассета из автомойки, смятые чеки.\n\nТы вытаскиваешь чеки.\n\nЧек первый: АЗС «Лукойл», 10 марта.\n\nЧек второй: ювелирный салон «Злато», ТРЦ «Москва». Дата — <em>10 ноября 2025</em>. 14:47. «Браслет серебряный, подвеска "Солнце", гравировка». Сумма — <em>7 490 ₽</em>.\n\nОн купил его четыре месяца назад. Это не случайная покупка.\n\nВнутренний карман. Ты нащупываешь сложенный листок. Записка от руки. Почерк не Димин — женский, округлый:\n\n<em>«Димочка, спасибо за вчерашний вечер. Я так давно не смеялась. Твоя Л.»</em>\n\nБумага помятая. Он носил это в кармане. Рядом с сердцем.' },
+      { text:'Смотрю обувь у двери', next:3, cards:['boots'], fb:'Под полкой — чёрные сапоги. Изящные, на каблуке. <em>37-й размер.</em>\n\nТвой 39-й. Ты никогда не носила 37-й.\n\nЭта обувь не оказывается «случайно» в чужой прихожей. Кто-то её здесь оставил. Сознательно.' },
+      { text:'Звоню Наташе. Шёпотом', next:3, cards:[], fb:'Наташа берёт трубку с третьего гудка. Голос сразу собранный — она спит чутко, привыкла к ночным сообщениям.\n\nТы рассказываешь.\n\nОна молчит секунд пять. Потом: <em>«Ты сейчас в безопасности?»</em>\n\nТы говоришь, что да.\n\n«Хорошо. Слушай. Не сходи с ума. Не буди его. Спрячь всё, что нашла, в облако. Я приеду к двенадцати — посмотрим его соцсети вместе. У меня для этого есть инструменты.»' },
     ]
   },
   3: {
-    tag: 'Сцена 3 · Звонок Наташе',
-    text: 'Наташа выслушала тебя. Она говорит: «Не делай глупостей. Спрячь всё, что нашла. Я буду у тебя к 12 дня». Утро.',
+    tag: 'Сцена 3 · 5:50 утра · Ванная',
+    text: 'Ты выходишь из прихожей. В ванную — ополоснуть лицо.\n\nВключаешь свет.\n\nНа полочке — твоя зубная щётка, его. Стакан общий.\n\nНа стакане, с внутренней стороны, — едва заметный след светло-розовой помады. Не твой оттенок. Ты не пользуешься розовой.\n\nНа спинке стула — его свитер. Тот, в котором он был вчера.\n\nДлинный волос. Светлый. Не твой.\n\nНа полке — флакон, которого ты не помнишь. <em>Tom Ford Lost Cherry.</em> Сладкий, женский. Не его аромат.',
+    prompt: 'Что делаешь?',
     choices: [
-      { text:'Хорошо, жду утра →', next:4, cards:[], fb:null },
+      { text:'Собираю всё — волос в пакетик, фото помады, фото флакона', next:4, cards:['bathroom'], fb:'Ты пакуешь волос в маленький пакетик из аптечки. Фотографируешь стакан под углом, чтобы помада была видна. Фотографируешь Tom Ford.\n\nТри минуты — три новых улики в твоей папке.\n\n<em>Все они говорят одно и то же. Просто всё громче.</em>' },
+      { text:'Стою у зеркала. Смотрю на себя. Минута тишины', next:4, cards:[], fb:'Ты смотришь на женщину в зеркале. Тёмные круги, которых вчера не было. Губы дрожат — едва заметно.\n\nТы говоришь себе вслух: «Аня. Не сейчас.»\n\nВыключаешь свет.' },
+      { text:'Брызгаю Tom Ford на запястье. Сравниваю с запахом куртки', next:4, cards:['bathroom'], fb:'Ты подносишь запястье к носу. Запах — тот самый, что на куртке. Сладкий, тяжёлый.\n\n<em>Это её парфюм. Он держит её парфюм у себя в ванной.</em>\n\nТы фотографируешь флакон. Делаешь скриншот его страницы в магазине — 26 990 ₽. Покупка не из вашего бюджета.' },
     ]
   },
   4: {
-    tag: 'Сцена 4 · Утро. Дима ушёл',
-    text: 'Дима ушёл на работу и забыл телефон дома. У тебя несколько часов. Что ты делаешь?',
+    tag: 'Сцена 4 · 6:30 утра · Кухня',
+    text: 'Ты сидишь на кухне. Кофе остыл — ты не сделала ни глотка.\n\nЧерез два часа Дима встанет. Поцелует тебя в макушку — как делает каждое утро уже семь лет — скажет «доброе утро, малыш» и уйдёт на работу.\n\nИ у тебя будет восемь часов. Одной. В этой квартире.\n\n<em>Восемь часов, чтобы решить, кто ты после этой ночи.</em>\n\nХолодильник гудит. На стене — ваш свадебный портрет в простой деревянной рамке. Дима заказал её в Питере, ездил забирать сам. Ты тогда подумала, что это и есть любовь.',
+    prompt: 'С чего начнёшь?',
     choices: [
-      { text:'Разблокирую телефон — угадываю пароль', next:5, cards:['screen'], fb:'Переписка открыта — скриншоты сделаны +1 улика' },
-      { text:'Тщательно осматриваю спальню', next:5, cards:['clip'], fb:'Заколка и чужой волос — +1 улика' },
-      { text:'Ищу «Лену» в Instagram', next:5, cards:['insta'], fb:'Нашла профиль. На фото — тот самый браслет +1 улика' },
+      { text:'Думаю стратегически. Что нужно для развода — то и собираю', next:5, cards:[], fb:'Ты открываешь заметки в телефоне. Создаёшь файл «Документы». Записываешь по пунктам: брачный договор, выписки со счёта, документы на квартиру, машину, переписки.\n\n<em>Холодная голова. Сейчас она важнее слёз.</em>' },
+      { text:'Записываю всё, что вспомню. Странности, отмазки, поздние возвраты', next:5, cards:[], fb:'Ты пишешь в обратном порядке.\n\nВчера — «задержался в офисе до одиннадцати».\nПозавчера — «деловой ужин».\nВ субботу — «играл в покер с Сашей».\n\nСписок всё длиннее.\n\n<em>Я давно знала. Просто не давала себе видеть.</em>' },
+      { text:'Пишу Наташе подробный пересказ — чтобы она пришла подготовленной', next:5, cards:[], fb:'Ты открываешь Telegram. Печатаешь. Сухо, по фактам — браслет, чек, записка, помада, парфюм.\n\nНаташа читает. Через минуту:\n\n«Хорошо, что записываешь. И ещё, Аня — <em>пересохрани все чаты в облако прямо сейчас.</em> Если что-то полетит — у тебя должна быть копия.»' },
     ]
   },
   5: {
-    tag: 'Сцена 5 · Вечер. Разговор',
-    text: 'Дима вернулся. Улики на столе. Он смотрит и молчит. Потом говорит: «Это не то, что ты думаешь».\n\nЧто ты требуешь?',
+    tag: 'Сцена 5 · 7:30 утра · Дима просыпается',
+    text: 'Будильник. Дима поворачивается, нажимает «отложить». Через пять минут — снова.\n\nТы делаешь вид, что только что проснулась.\n\nОн встаёт. Подходит, целует в макушку.\n\n<em>«Доброе утро, малыш. Поспала нормально?»</em>\n\nТы смотришь в его лицо — то самое, которому вчера сказала «я тебя обожаю».\n\nЕго телефон вибрирует. Один раз. Дима берёт его, экран — спрятан от тебя. Палец быстро. Сообщение прочитано, экран погас.\n\nОн идёт в душ.',
+    prompt: 'Как ведёшь себя?',
     choices: [
-      { text:'Спокойно: квартира и машина остаются мне', next:'good', cards:[], fb:null },
-      { text:'Эмоционально — слёзы и крик', next:'mid', cards:[], fb:null },
-      { text:'Молча ухожу — найду другого', next:'bad2', cards:[], fb:null },
+      { text:'Подыгрываю. «Хорошо, спасибо. Налью кофе?» Целую в щёку', next:6, cards:[], fb:'Ты улыбаешься. Точно как обычно. Ноги несут на кухню. Руки наливают кофе.\n\nДима в душе насвистывает.\n\nТы смотришь на свои руки — они не дрожат.\n\n<em>Ты узнала о себе кое-что новое за этот час: ты умеешь играть.</em>' },
+      { text:'Холодно, односложно. «Доброе». Иду в кухню без поцелуя', next:6, cards:[], fb:'Ты встаёшь, не глядя на него. Идёшь на кухню.\n\nЧерез пять минут он выходит из душа. В одном полотенце.\n\n«Аня, ты в порядке? Какая-то ты...»\n\nТы перебиваешь: «Просто плохо спала».\n\nОн смотрит. Что-то понимает. Берёт кофе. Уходит одеваться.\n\n<em>Он почувствовал. Теперь будет осторожнее.</em>' },
+      { text:'Намёк: «Дима, ты помнишь, что мы планировали на эти выходные?»', next:6, cards:[], fb:'Дима замирает на секунду.\n\n«Мы... вроде ничего не планировали. Или что?»\n\nВы ничего не планировали. Это была твоя проверка. Он не помнит вообще никаких планов.\n\n<em>Он давно живёт не с тобой. Только спит на твоей подушке.</em>\n\nДима улыбается, целует в щёку, идёт в душ.' },
+    ]
+  },
+  6: {
+    tag: 'Сцена 6 · 9:12 утра · Восемь часов мои',
+    text: 'Дверь захлопнулась. Лифт уехал. Ты слышишь, как за окном завелась его машина — звук растворился в утреннем потоке.\n\nТы возвращаешься в спальню.\n\nНа тумбочке — его телефон. Забыл. Торопился, как никогда.\n\nТы берёшь его в руку. Тёплый. Этот аппарат спит на тумбочке рядом с твоей головой каждую ночь уже год.\n\n<em>Восемь часов мои.</em>',
+    prompt: 'Что успеваешь?',
+    choices: [
+      { text:'Беру телефон. Перебираю пароли — какие могу вспомнить за семь лет', next:7, cards:['screen'], fb:'Ты пробуешь по очереди.\n\n0506 — твой день рождения. Не подходит.\n2512 — ваше первое Рождество. Не подходит.\n0709 — день вашей свадьбы. <em>Открыто.</em>\n\nТы открываешь Telegram. Закреплённый чат сверху — «Лена С. ❤️».\n\nПереписка идёт с октября. Шесть месяцев. Сотни сообщений.\n\nТы делаешь скриншоты. Десятки. Каждый — в облако.' },
+      { text:'Спальня. Каждый ящик, каждая полка', next:7, cards:['clip'], fb:'В носке его — заколка. Светлая. На ней — длинный волос. Не твой.\n\nПод матрасом — пустая упаковка от презервативов. Не та марка, что вы покупаете.\n\nВ кармане его пиджака на стуле — чек из «Кофемании». Два кофе. Один с ванилью.\n\n<em>Дима не пьёт ваниль.</em>' },
+      { text:'Instagram. Ищу «Лену» из его подписок', next:7, cards:['insta'], fb:'Ты вводишь в поиск: Лена.\n\nДима подписан на 47 человек. Из них — четыре Лены. Ты идёшь по очереди.\n\nВторая. Лена Симакова. 26 лет. Маркетолог. На последнем фото — она у моря, тонкая, голубоглазая.\n\nНа левом запястье — <em>твой браслет</em>. Подвеска-солнце. Та самая.\n\nПодпись под фото: «Спасибо тому, кто понимает 🌞»\n\nЛайк от Димы. Один комментарий: «Ты моё всё».' },
+    ]
+  },
+  7: {
+    tag: 'Сцена 7 · 10:15 утра · Звонок в дверь',
+    text: 'Ты только начала разбирать его телефон. Скрины, заметки, всё в облако.\n\nВдруг — звонок в дверь. Резкий, длинный.\n\nТы замираешь.\n\nГлазок. Это Алина — соседка с пятого этажа. Двадцать восемь лет, длинные тёмные волосы, в спортивном костюме. Она ходит с Димой в один спортзал — не вместе, но «там пересекаемся».\n\nОна стучит снова: <em>«Ань, открой! Я знаю, что ты дома».</em>',
+    prompt: 'Что делаешь?',
+    choices: [
+      { text:'Открываю. Спокойно. У меня нет времени на странности', next:8, cards:[], fb:'Алина шагает в прихожую, не разуваясь. Глаза бегают.\n\n«Анют, привет. Не одолжишь соли? У меня закончилась, а магазин на учёте».\n\nТы достаёшь соль. Молча.\n\nПока ты на кухне, Алина смотрит — на стул с курткой Димы. На её лицо ложится тень. <em>Что-то знает?</em>\n\nОна забирает соль. У двери оборачивается:\n\n«Передай Диме привет. И... ты у врача давно была? Просто… выглядишь устало».\n\nДверь захлопнулась.\n\n<em>Может, она и есть Лена?</em>' },
+      { text:'Не открываю. Делаю вид, что нет дома', next:8, cards:[], fb:'Ты замираешь у глазка. Алина стоит ещё минуту — потом качает головой и уходит.\n\nНо ты успела заметить: <em>в её руке тоже телефон. И она быстро написала кому-то сообщение.</em>\n\nЧерез окно видишь, как Алина переходит улицу — и набирает кому-то. Долго говорит. Слишком долго для случайной соседки.' },
+      { text:'Открываю и в лоб: «Ты знаешь Диму?»', next:8, cards:[], fb:'Алина смеётся. Слишком быстро.\n\n«Конечно. Я ваша соседка три года. Что за вопрос?»\n\nТы смотришь ей в глаза.\n\n«Алина. У него роман. Это ты?»\n\nТри секунды тишины. Алина бледнеет — но не как виноватая. Как напуганная.\n\n«Аня… я не она. Не знаю, кто. Но я видела его в кафе на Маросейке месяц назад. С блондинкой. Лет 25-ти. Высокая».\n\nОна разворачивается и уходит. Не за солью пришла.\n\n<em>Алина — не Лена. Но она что-то видела.</em>' },
+    ]
+  },
+  8: {
+    tag: 'Сцена 8 · 11:00 утра · Звонок на работу',
+    text: 'Ты знаешь, что в офисе Димы сидит Ксения Михайловна — секретарь, бухгалтер юротдела. Молодая, ухоженная. На корпоративе в Новый год она стояла рядом с Димой и смотрела на тебя слишком долго.\n\nНаташа ещё ночью прислала ссылку: «Установи "Облачный номер" — даёт виртуальный мобильный за 30 секунд. Свой номер он не увидит. У тебя 14 дней бесплатно».\n\nТы устанавливаешь приложение. Получаешь номер +7 (495) 230-…. Набираешь рабочий Димы.\n\nГолос Ксении: «Юридический отдел, Ксения Михайловна, слушаю».\n\nТы говоришь спокойно: «Здравствуйте. Это Анна, жена Дмитрия Морозова. Он сейчас на работе?»\n\nПауза. Слишком долгая.\n\n<em>«Анна Сергеевна... да, конечно. Дмитрий Александрович сегодня в командировке в Воронеже. Мы вчера согласовали».</em>\n\nДима не в Воронеже. Дима утром ушёл в офис.',
+    prompt: 'Что делаешь?',
+    choices: [
+      { text:'«Ксения, я знаю, что он не в командировке. Что вы скрываете?»', next:9, cards:['ksenia'], fb:'Ксения секунд десять молчит.\n\nПотом тише: «Анна Сергеевна. Я не имею права говорить. Но... Дмитрий Александрович попросил оформить командировку задним числом. Уже не первый раз. Я не знаю, где он на самом деле».\n\nТы записываешь время звонка.\n\n<em>Командировки. Подделанные документы. Это уже не просто измена. Это работа.</em>' },
+      { text:'Спокойно: «Хорошо, спасибо», — кладу трубку. Ищу сама', next:9, cards:['ksenia'], fb:'Ты кладёшь трубку. Открываешь корпоративный портал — у тебя есть доступ как у жены сотрудника.\n\nИщешь «командировки Морозов Д.А.».\n\nЗа полгода — четырнадцать командировок. Тбилиси, Сочи, Воронеж, Калининград.\n\nВсё оформлено Ксенией.\n\n<em>Вот только в Тбилиси и Сочи Дима тебе ни разу не сказал, что был.</em>' },
+      { text:'Не настаиваю — может, я ошибаюсь. Закрываю звонок', next:9, cards:[], fb:'Ты говоришь: «Спасибо, я перезвоню позже».\n\nКладёшь трубку.\n\nТы упустила момент. Ксения теперь предупредит Диму. Он подготовится.\n\n<em>Жалость к чужим людям — последнее, что тебе сейчас нужно.</em>' },
+    ]
+  },
+  9: {
+    tag: 'Сцена 9 · 11:45 утра · Звонок Саше',
+    text: 'Ты сидишь с заметками. Дима в субботу был «на покере с Сашей». Это его еженедельная отмазка.\n\nСаша — лучший друг Димы. Программист, женат на Кате. Не самый острый человек на свете — может проговориться, если не настроен врать.\n\nТы набираешь.\n\nСаша: «Аня, привет! Что-то случилось?»\n\nТы говоришь спокойно — будто звонишь по обычному поводу.',
+    prompt: 'Как разговариваешь?',
+    choices: [
+      { text:'Под видом дружеского звонка: «Саш, как покер вчера прошёл?»', next:10, cards:['sasha'], fb:'Саша секунд пять молчит.\n\n«Аня... мы вчера не играли».\n\nПауза.\n\n«Дима написал в обед: "не приду, заболел". Мы перенесли».\n\nТы записываешь время сообщения. Вчера в 14:32 Дима писал тебе, что «играет с Сашей».\n\n<em>Алиби, которое разваливается на голос.</em>\n\nСаша: «А что? Что-то не так?»\n\nТы говоришь: «Нет. Просто проверяла». Кладёшь трубку.' },
+      { text:'Прямо: «Саша, у Димы кто-то есть?»', next:10, cards:['sasha'], fb:'Саша глубоко выдыхает.\n\n«Аня. Я не лезу в чужую жизнь».\n\n«Саша. Скажи правду».\n\nДолгая пауза.\n\n«Аня. Я не знаю, кто. Но он стал странный с осени. Постоянно с телефоном. На моём дне рождения вышел на улицу разговаривать на полчаса. Я ему сказал — Дим, осторожней. Он сказал — отстань».\n\nТы записываешь.\n\n<em>Лучший друг знал. Молчал. Это тоже информация.</em>' },
+      { text:'Не звоню. Слишком рискованно — Саша расскажет Диме', next:10, cards:[], fb:'Ты кладёшь телефон. Саша слишком близкий друг — позвонит Диме сразу же.\n\nНо ты знаешь без звонка: «покер по субботам» — это не покер.\n\n<em>Ты решаешь оставить это для следующего хода.</em>' },
+    ]
+  },
+  10: {
+    tag: 'Сцена 10 · 12:00 · Наташа на пороге',
+    text: 'Звонок в дверь. На этот раз ты ждала.\n\nНаташа в дверях — без приветствия, сразу проходит на кухню. В руках ноутбук, блокнот, телефон в защитном чехле.\n\nОна снимает пальто, садится. Открывает ноутбук.\n\n«Так. Покажи всё, что нашла».\n\nТы открываешь свою папку: фото браслета, скрины с его телефона, чеки, записка, заметки. Всё, что собрала за восемь часов.\n\nНаташа листает. Молча. Десять минут.\n\nПотом: <em>«Окей. У нас три задачи. Первая — найти Лену. Вторая — собрать её бэкграунд. Третья — решить, что ты делаешь сегодня вечером».</em>\n\nОна разворачивает к тебе ноутбук. На экране — Instagram.',
+    prompt: 'С чего начнём?',
+    choices: [
+      { text:'Ищем Лену через Instagram — у меня уже есть «Лена С.» из переписок', next:11, cards:['engaged'], fb:'Наташа фильтрует — Москва, 24-30 лет, маркетинг.\n\nТретьим аккаунтом всплывает <em>Лена Симакова</em>. 26 лет.\n\nНаташа листает её ленту в обратном порядке.\n\nЯнварь, март, апрель... останавливается на октябре.\n\nФото с моря. Лена и мужчина — не Дима. Высокий, темноволосый, в очках. Подпись: <em>«Сказал да 🤍»</em>. Кольцо на её пальце.\n\nНаташа поднимает на тебя глаза:\n\n«Аня. Она помолвлена с другим. Это либо очень странно... либо <em>она тоже не знает</em>».' },
+      { text:'Сначала разбираем переписки — ищем имена, даты, обещания', next:11, cards:['engaged'], fb:'Первое сообщение от Лены — 12 октября 2025. «Я весь вечер о тебе думаю».\n\nДима: «Скоро. Я в разъездах. Скоро всё устаканится».\n\nДекабрь: Лена — «Ты в Москве на Новый год?» Дима — «Не знаю. Семейные дела».\n\n«Семейные дела» — это твоя поездка к маме. Он остался один, потому что «надо доделать отчёты».\n\nНаташа открывает Instagram Лены — и видит: <em>помолвка с другим мужчиной</em>.' },
+      { text:'Просим Наташу проверить его финансы — у меня есть выписки', next:11, cards:['engaged'], fb:'Наташа смотрит выписки два часа.\n\n«Аня. За полгода — шесть переводов на одну карту, не на твою. По 50-70 тысяч. Получатель скрыт».\n\n«Подписка на отель в Зеленоградске. Каждые две недели, по пятницам».\n\nНаташа закрывает ноут. <em>«Он живёт другую жизнь. И финансирует её».</em>\n\nПотом находит Лену Симакову. На последнем фото — другой мужчина, помолвка.' },
+    ]
+  },
+  11: {
+    tag: 'Сцена 11 · 13:30 · Пишу Лене',
+    text: 'Наташа уехала в офис — пообещала вернуться к 19:00. На столе перед тобой — ноутбук с открытым Instagram Лены.\n\nЕй 26. Она помолвлена с другим. Шесть месяцев у неё с твоим мужем.\n\nТы открываешь её директ. Курсор в поле сообщения.\n\n<em>Сейчас один клик может изменить всё.</em>\n\nЕсли ты напишешь — Лена либо ответит, либо предупредит Диму. Если ответит — ты узнаешь, что она знает. Если предупредит — у тебя останется только то, что уже собрала.',
+    prompt: 'Какое сообщение?',
+    choices: [
+      { text:'Прямо: «Здравствуйте, Лена. Я Анна — жена Дмитрия Морозова. Нам надо поговорить»', next:12, cards:[], fb:'Ты пишешь сообщение. Перечитываешь. Палец зависает над «отправить».\n\nОтправлено.\n\nДве минуты тишины.\n\nКрасные две галочки — прочитано в 13:34.\n\nПотом «печатает...» Потом «онлайн». Потом снова «печатает...».' },
+      { text:'Под видом сестры: «Лена, я Маша, сестра Димы. Ему стало плохо»', next:12, cards:[], fb:'Ты пишешь под чужим именем. Лена отвечает мгновенно: «Что случилось?? Где он?? Я еду!»\n\nТы понимаешь — она волнуется как близкий человек.\n\nТы пишешь: «Лена, я солгала. Я не Маша. Я Анна — его жена».\n\nЧитает.\n\n«Печатает...» Долго. Минуту. Две.' },
+      { text:'Не пишу. Слишком рискованно. Жду подходящего момента', next:14, cards:[], fb:'Ты закрываешь ноутбук.\n\nНо твоё бездействие — тоже выбор. Ты упустила шанс получить главное доказательство — слова самой Лены.\n\nК вечеру у тебя будут только косвенные улики. Без её слов — Дима всё ещё может вывернуть всё.\n\n<em>Иногда нерешительность дороже ошибки.</em>' },
+    ]
+  },
+  12: {
+    tag: 'Сцена 12 · 14:45 · Лена отвечает',
+    text: 'Сообщение приходит.\n\n<em>«Анна. Боже. Я думала, он давно в разводе. Он сказал — три года назад. Что развёлся в 22-м».</em>\n\nТы перечитываешь.\n\nВ 22-м. Когда вы с Димой были в Италии на годовщину.\n\nЛена пишет дальше:\n\n«Я не знала. Клянусь. Мы с ним планировали свадьбу — он просил подождать, пока он закроет вопрос с алиментами и квартирой. Я думала — это просто долгий бракоразводный процесс».\n\nТы смотришь на её фото с другим мужчиной. Помолвка.\n\n«Лена, а кто на фото?»\n\n«Это Артём. Мой жених. Мы с Димой познакомились прошлой осенью — у меня и Артёма был перерыв. Когда я узнала, что Дима «разводится», я думала — это судьба. Артём вернулся в декабре, но я уже... запуталась».\n\nДима спал с тобой, обещая Лене женитьбу. Лена планировала свадьбу с Димой, не зная про тебя. Артём ничего не знает.\n\n<em>Вы все живёте во лжи Димы. Все трое.</em>\n\nЛена пишет: «Анна. Я хочу вам помочь. Что вам нужно?»',
+    prompt: 'Что просишь у Лены?',
+    choices: [
+      { text:'Все её переписки с Димой за полгода. Всё, что он ей обещал', next:13, cards:['truth'], fb:'Лена присылает.\n\nАрхив 47 МБ. Скриншоты. Голосовые. Видео-кружочки.\n\nДимины обещания: «Скоро мы будем жить вместе». «Я уже подал на развод». «Жена ничего не знает, она в депрессии — её нельзя сейчас тревожить».\n\n<em>Он использовал твоё имя. Твою жизнь. Твою «депрессию» — как фон для своей лжи.</em>\n\nТы добавляешь это в папку. Теперь у тебя не просто улики. У тебя есть Лена. Свидетель.' },
+      { text:'Прошу её прийти на разговор сегодня вечером. Лично', next:13, cards:['truth'], fb:'Лена соглашается. «Я буду в 19:30. Адрес?»\n\nТы пишешь адрес. Закрываешь ноутбук.\n\n<em>Сегодня вечером Дима встретит не одну женщину. Он встретит обеих. Сразу.</em>\n\nЭто либо самый смелый ход твоей жизни, либо самая большая катастрофа.' },
+      { text:'Прошу видео — где она говорит, что Дима сказал ей про развод', next:13, cards:['truth'], fb:'Лена записывает видео сразу. Полторы минуты.\n\nОна сидит дома, лицо без макияжа. Говорит спокойно, но руки дрожат:\n\n«Меня зовут Лена Симакова. Я полгода встречалась с Дмитрием Морозовым. Он сказал, что в разводе три года. Он обещал жениться на мне. Я не знала, что он женат».\n\nТы сохраняешь видео в облако.\n\n<em>Это уже невозможно отрицать.</em>' },
+    ]
+  },
+  13: {
+    tag: 'Сцена 13 · 15:30 · Кафе на Маросейке',
+    text: 'Ты сидишь у окна в кафе на Маросейке — том самом, где Алина «видела Диму с блондинкой».\n\nЛена опаздывает на семь минут. Заходит — ты сразу узнаёшь её. Высокая, тонкая, в светлом пальто. Волосы убраны в небрежный пучок. Лицо без макияжа, бледное.\n\nОна садится напротив. Не снимает пальто.\n\n«Анна. Простите, что задержалась. Не могла зайти первые две минуты».\n\nНа её шее — тонкая цепочка. Такая же подвеска-солнце. Парная.\n\nДве женщины, которых обманули. Каждая — своим способом.\n\nЛена выкладывает на стол ноутбук, пакет с распечатками, телефон.\n\n«Я принесла всё. Спрашивайте».',
+    prompt: 'Что говоришь Лене?',
+    choices: [
+      { text:'«Лена. Покажи последние три месяца. Только то, что на бумаге»', next:14, cards:[], fb:'Она открывает папку. Распечатки скриншотов — голосовых нет, только текст.\n\nТы листаешь. Одна и та же интонация. «Скоро будем жить вместе». «Жди ещё немного». «Она в депрессии».\n\nВ конце папки — копия билета на двоих в Сочи. На прошлой неделе. Дима сказал тебе — «командировка».\n\nЛена тихо: «Я не знала. Богом клянусь».\n\n<em>Ты ей веришь. Это тоже улика.</em>' },
+      { text:'«Лена. Когда он у тебя был последний раз?»', next:14, cards:[], fb:'«Вчера. С восьми до десяти вечера. Сказал, что задержался в офисе».\n\nЭто как раз когда Дима «возвращался с делового ужина» в одиннадцать.\n\n«А до этого?»\n\n«Понедельник. Среда. Каждые два-три дня».\n\nТы записываешь.\n\nЛена: «Анна. Скажите. Что я могу сделать, чтобы помочь?»' },
+      { text:'«Лена. Ты придёшь сегодня вечером в 19:30. Дима должен увидеть нас вместе»', next:14, cards:[], fb:'Лена выдыхает. Долго.\n\n«Я приду».\n\nЗаписывает адрес. Закрывает ноутбук.\n\n«Анна. Я думала — это будет ужасный разговор. Я ожидала ненависти. А получила… ясность».\n\nВы расходитесь.\n\n<em>Сегодня вечером Дима встретит обеих. Это уже не конфронтация. Это суд.</em>' },
+    ]
+  },
+  14: {
+    tag: 'Сцена 14 · 16:30 · ТРЦ «Москва», ювелирный «Злато»',
+    text: 'Ты заходишь в ТРЦ «Москва». Поднимаешься на третий этаж.\n\n«Злато» — небольшой бутик. Витрина с серебром. За прилавком — женщина лет 45, в форме.\n\nТы достаёшь телефон. Открываешь фото Димы — то, где он в чёрной куртке.\n\n«Помните этого человека? Он покупал у вас браслет в ноябре».\n\nЖенщина смотрит. Хмурится. Узнаёт.\n\n«Да. Дмитрий, кажется. Постоянный клиент — у нас в системе сохранён».',
+    prompt: 'Что спрашиваешь?',
+    choices: [
+      { text:'«Что именно он покупал? И с кем?»', next:15, cards:['jewelry'], fb:'«Браслет с подвеской "Солнце", 7 490. Один. Без женщины. Выбирал по фото на телефоне — кого-то спрашивал по голосу. Долго болтал, минут двадцать».\n\nТы спрашиваешь: «Это она?» Показываешь фото Лены.\n\n«Нет. Не она. Я её не видела — он только по голосу советовался».\n\n<em>С кем он советовался? Кто знал?</em>\n\nПродавщица: «Это, видимо, его мать была. Голос звучал постарше».' },
+      { text:'«А были ли другие покупки за последний год?»', next:15, cards:['jewelry'], fb:'Продавщица заглядывает в систему.\n\n«Морозов Д.А. ... пять покупок за год. Серьги в апреле, цепочка в июле, кулон в августе, тот браслет в ноябре, и кольцо в феврале».\n\n<em>Кольцо в феврале.</em>\n\nЭто не для тебя. Тебе он купил на 8 марта духи. Никаких колец.\n\nПолгода назад он купил кольцо. Помолвочное.' },
+      { text:'Не задаю лишних вопросов. Прошу только распечатать чек', next:15, cards:[], fb:'Продавщица распечатывает копию.\n\nТы благодаришь, выходишь.\n\nНо ты упустила возможность узнать больше — продавщица не из болтливых, в следующий раз будет осторожнее.' },
+    ]
+  },
+  15: {
+    tag: 'Сцена 15 · 17:00 · Звонок свекрови',
+    text: 'Ты сидишь в машине у ТРЦ. Телефон в руках.\n\nТатьяна Викторовна — мать Димы. Тёплая женщина, которая семь лет называла тебя «дочкой». Звонит редко — стесняется «не отвлекать».\n\nТы набираешь под предлогом: «Спасибо за подарок на годовщину».\n\n«Анют, какой подарок? Он сказал, что ещё не выбрал. Ты о чём?»\n\nПауза.\n\n«Анют... как у тебя дела? У тебя голос... странный».\n\nТы понимаешь — она знает что-то, чего не знаешь ты.',
+    prompt: 'Что говоришь?',
+    choices: [
+      { text:'Прямо: «Татьяна Викторовна, что Дима вам говорил про нас?»', next:16, cards:['mom'], fb:'Долгое молчание. Потом, тихо:\n\n«Анют. Он сказал мне в декабре, что вы расходитесь. Что ты подаёшь на развод. Что у тебя депрессия и просьба — не звонить тебе. Он привёл ко мне на день рождения в феврале... девушку. Молодую, светленькую. Сказал: "я с ней теперь"».\n\nТы держишь руль.\n\n«Анют. Это правда? Ты подавала на развод?»\n\n«Татьяна Викторовна. Я никогда. Я живу с ним. Каждый день».\n\nДолгая тишина. Потом тихий звук. Свекровь плачет.\n\n«Боже мой. Прости меня».' },
+      { text:'Прошу её скинуть фото с того дня рождения', next:16, cards:['mom'], fb:'«Татьяна Викторовна. Скиньте мне, пожалуйста, фото с вашего дня рождения в феврале».\n\nЧерез минуту приходит фото.\n\nЗа столом — свекровь, муж, Дима... и Лена. Та же Лена, что в Instagram. С тем самым браслетом на руке.\n\nДима обнимает Лену за плечо. Все улыбаются.\n\nПод фото свекровь пишет: «Аня. Прости меня. Я не знала».\n\n<em>Он представил Лену как невесту собственной матери.</em>' },
+      { text:'Молчу. Потом: «Я перезвоню», — кладу трубку', next:16, cards:[], fb:'Ты не можешь говорить. Кладёшь трубку.\n\nСвекровь почти сразу пишет: «Анют. Что-то не так. Я готова к разговору. Когда сможешь, позвони».\n\nТы откладываешь телефон в сторону.\n\n<em>Иногда нужно сначала справиться самой.</em>' },
+    ]
+  },
+  16: {
+    tag: 'Сцена 16 · 17:30 · Звонок юристу',
+    text: 'Наташа сказала — позвони Светлане. «Она ведёт развод моей старшей сестры. Знает всё про имущество. Возьмёт сто рублей за консультацию — потому что я попросила».\n\nТы набираешь.\n\nСветлана отвечает с третьего гудка. Говорит коротко, по делу.\n\n«Аня. Наташа меня предупредила. Слушаю».\n\nТы рассказываешь. За четыре минуты — основное: семь лет, год в браке, квартира на нём, машина общая, переписки, Лена, мать Димы.',
+    prompt: 'Что спрашиваешь у Светланы?',
+    choices: [
+      { text:'«Что мне нужно сделать в ближайшие 48 часов?»', next:17, cards:['lawyer'], fb:'«Слушай меня внимательно. Первое — все улики продублируй в облако и на флешку. Второе — заявление на развод подавай в течение 48 часов после разговора с ним. Не дольше. Иначе он успеет вывести активы. Третье — выписку со счетов сделай прямо сейчас, скриншоты, не позже сегодня».\n\n«Аня. У тебя сильная позиция. Не дай ему слабину. Я могу быть твоим адвокатом, если решишь».\n\n<em>У тебя есть стратегия. И человек, который её знает.</em>' },
+      { text:'«Что с квартирой? Она оформлена на него»', next:17, cards:['lawyer'], fb:'«Когда покупали — в браке или до?»\n\n«В браке. Через два года после свадьбы».\n\n«Тогда — совместно нажитая. Раздел пополам. Но! Если он купил её на средства, полученные по наследству или подарок — он может попытаться доказать. Документы на покупку — найди».\n\n«А если он попытается её продать?»\n\n«Сегодня же подай заявление в Росреестр о запрете сделок без твоего согласия. Я скину тебе шаблон. Подпишешь и сходишь завтра утром».\n\n<em>Юрист есть. План есть. Завтра — Росреестр.</em>' },
+      { text:'«А что мне сказать ему вечером? Какие слова?»', next:17, cards:['lawyer'], fb:'«Аня. Сейчас слушай. Ты ему скажешь короткую фразу: "Я знаю. Я подаю на развод. Завтра в 10 утра я в Росреестре, в 14 — у нотариуса, в 16 — у адвоката. Если хочешь договориться по-человечески — у тебя один день".\n\n«И всё. Не объясняй. Не оправдывайся. Не показывай улики, если он начнёт спорить — пусть оспаривает в суде».\n\n«Чем меньше слов — тем сильнее позиция».\n\n<em>Скрипт у тебя есть.</em>' },
+    ]
+  },
+  17: {
+    tag: 'Сцена 17 · 18:00 · В машине у дома',
+    text: 'Ты припарковалась у подъезда. Не выходишь.\n\nДима будет дома через два часа. Папка в багажнике. Лена приедет к 19:30.\n\nВ голове крутится — фрагменты последних месяцев. Те, на которые ты закрывала глаза.\n\n<em>Декабрь.</em> Ты пишешь: «Помнишь, обещал в Питер на годовщину?» Он: «Аня, какая годовщина? У нас она в марте». Ты тогда подумала — «он устал, забыл».\n\n<em>Январь.</em> Ты находишь у него в куртке билет в Зеленоградск. Он смеётся: «Это партнёр забыл». Ты поверила.\n\n<em>Февраль.</em> Свекровь не звонит две недели. Ты спрашиваешь. Дима: «Мама болеет, нельзя её тревожить». Ты послушалась.\n\n<em>Вчера вечером.</em> Он сказал: «Влюблён в каждую клетку».\n\nКаждая клетка. Включая те, что принадлежали Лене.',
+    prompt: 'Что делаешь?',
+    choices: [
+      { text:'Завожу машину. Еду домой. Уже всё знаю — пора готовиться', next:18, cards:[], fb:'Ты заводишь двигатель. Через минуту паркуешься на своё место.\n\nВыходишь, забираешь папку из багажника. Поднимаешься на свой этаж.\n\nКлюч в замке.\n\n<em>Финальный ход. Через два часа.</em>' },
+      { text:'Открываю заметки. Пишу всё, что вспомнила. Каждую странность', next:18, cards:[], fb:'Ты пишешь сорок минут. В заметках — десятки эпизодов. Дни, фразы, даты.\n\nПо каждому — одна и та же закономерность: ты замечала. И решала «не замечать».\n\nТы перечитываешь. Закрываешь заметки.\n\n<em>Это уже не его история. Это твоя.</em>' },
+      { text:'Звоню Наташе: «Я в машине у дома. Не могу зайти»', next:18, cards:[], fb:'Наташа отвечает на втором гудке.\n\n«Аня. Ты сейчас сильнее, чем пять часов назад. Ты собрала всё. Лена едет. Ты в этой истории — главная. Не он».\n\n«Зайди. Прими душ. Накрой стол. Поставь чай. Когда он зайдёт — ты будешь дома, в своих стенах. Это твоя территория».\n\n«Через два часа всё закончится».\n\nТы выдыхаешь.' },
+    ]
+  },
+  18: {
+    tag: 'Сцена 18 · 18:30 · Дима звонит',
+    text: 'Ты только заварила чай. Стол накрыт. Папка с уликами — на свободном стуле, прикрытая салфеткой.\n\nЗвонит телефон. Дима.\n\nТы поднимаешь.\n\n«Аня, малыш. Я задержусь. Срочный клиент — нужно подъехать в Гольяново. Буду к восьми».\n\nНа фоне — звон стекла. И женский смех.\n\nКороткий. Но отчётливый.',
+    prompt: 'Что отвечаешь?',
+    choices: [
+      { text:'«Хорошо, дорогой. Жду. Целую» — играю до конца', next:19, cards:[], fb:'Ты говоришь это так, чтобы он не заподозрил ничего.\n\n«Хорошо, дорогой. Жду тебя. Целую».\n\nДима: «Целую, малыш».\n\nКладёшь трубку.\n\nКомната тихая. Только звук пара из чашки.\n\n<em>Час сорок минут. Ты выдержала уже семь часов. Выдержишь ещё один.</em>' },
+      { text:'«Гольяново? А я думала, ты в офисе» — он замолкает на секунду', next:19, cards:[], fb:'Пауза.\n\n«В офисе и был. Сейчас оттуда еду».\n\nТы говоришь: «Ясно. Жду».\n\nКладёшь трубку.\n\nТеперь он знает, что ты что-то заметила. Будет осторожнее. Возможно — приедет раньше. Возможно — позже, чтобы успеть подготовить версию.\n\n<em>Игра ускорилась.</em>' },
+      { text:'«Дима. Я слышу её смех» — он отключается', next:19, cards:[], fb:'Молчание секунд пять.\n\nПотом гудки.\n\nОн отключился. Не сказал ни слова.\n\nТы кладёшь телефон. Он сейчас лихорадочно думает, что делать.\n\n<em>Он напуган. Это может быть хорошо. А может — очень плохо.</em>\n\nТы пишешь Лене: «Готовься. Возможно, он приедет с её историей».' },
+    ]
+  },
+  19: {
+    tag: 'Сцена 19 · 19:30 · Подготовка',
+    text: 'Через 18 минут Дима будет дома.\n\nТы стоишь на кухне. Папка с уликами лежит на столе.\n\nЭто момент, когда ты решаешь — какой Анной выйдешь из этой ночи.\n\nТы можешь сыграть холодно — закон, документы, развод.\n\nМожешь дать волю эмоциям — пусть он почувствует, что сделал.\n\nМожешь поставить ультиматум — и оставить ему один путь.\n\nИли можешь не делать ничего из этого. Можешь уйти.',
+    prompt: 'Какой план?',
+    choices: [
+      { text:'Холодно. Стратегически. Развод и имущество — главное', next:20, cards:[], fb:'Ты собираешь папку. Раскладываешь по порядку, как презентацию. Делаешь себе чай. Сидишь в кресле и ждёшь.\n\n<em>Холодная голова. Ты много раз слышала: «суд любит документы, а не слёзы». Сегодня ты будешь судом.</em>' },
+      { text:'Эмоция. Пусть он почувствует, что сделал. Прямо в лоб', next:20, cards:[], fb:'Ты ходишь по кухне. Прокручиваешь, что скажешь.\n\n«Семь лет», «как ты мог», «с какой совестью каждое утро меня целовал».\n\nСлёзы наворачиваются. Ты их не сдерживаешь.\n\n<em>Иногда правду надо сказать так, чтобы дрогнуло. Даже если потом дорого.</em>' },
+      { text:'Беру сумку. Ухожу к Наташе. Без разговора', next:'bad2', cards:[], fb:null },
+    ]
+  },
+  20: {
+    tag: 'Сцена 20 · 19:48 · Кухня. Он вернулся',
+    text: 'Дверь захлопнулась. «Привет, малыш!» — стандартное приветствие из прихожей.\n\nОн заходит на кухню. Останавливается.\n\nВидит папку на столе.\n\nВидит твоё лицо.\n\nКладёт ключи на стол. Медленно.\n\n«Аня... что это?»\n\nТы молча открываешь папку.\n\nФото браслета. Чек на 7 490 ₽ от 10 ноября. Записка от Лены. Скрины переписок.\n\nДима смотрит. Не на тебя — на папку. Желваки двигаются.\n\nПотом он садится. Очень осторожно.\n\n<em>«Аня. Это не то, что ты думаешь.»</em>',
+    prompt: 'Что отвечаешь?',
+    choices: [
+      { text:'Открываю ноут. На экране — Лена по видеосвязи. «Дима, ты помнишь Лену?»', next:'perfect', requires:'truth', cards:[], fb:null },
+      { text:'Спокойно: «Дима. Квартира моя, машина моя. Завтра подаёшь на развод»', next:'good', cards:[], fb:null },
+      { text:'Срываешься. Кричишь. «Семь лет! Как ты мог?»', next:'mid', cards:[], fb:null },
+      { text:'Берёшь сумку. Молча выходишь', next:'bad2', cards:[], fb:null },
     ]
   }
 };
 
 const endings = {
-  bad1: { icon:'😔', title:'Слишком рано', text:'Дима всё отрицал. Без улик ты осталась ни с чем. Иногда нужно подождать, чтобы победить.', color:'#F09595' },
-  good:  { icon:'⚖️', title:'Свобода', text:'Адвокат улыбнулась, увидев твою папку с уликами. Квартира и машина остались за тобой. Ты выиграла.', color:'#97C459' },
-  mid:   { icon:'🤝', title:'Спорный развод', text:'Он воспользовался твоими эмоциями. Делите всё пополам. Больно — но ты вышла из этого.', color:'#FAC775' },
-  bad2:  { icon:'💔', title:'Горькая потеря', text:'Пока ты думала о будущем, он забрал настоящее. Решения в злости редко бывают выгодными.', color:'#F09595' },
+  perfect: {
+    icon:'⚡',
+    title:'Двойной удар',
+    when:'Через шесть месяцев',
+    text:'«Дима, познакомься. Это Лена Симакова. Помнишь, ты ей предложил выйти замуж?»\n\nЛена машет с экрана. Спокойно: «Дима, я скинула Анне все наши переписки. Ты обещал мне свадьбу через месяц. Тебе есть что объяснить?»\n\nДима белеет. Открывает рот. Закрывает. Снова открывает.\n\nНаташа на следующий день начала развод. Брачный договор Дима подписывал семь лет назад, не читая — он терял всё.\n\nЧерез четыре месяца — суд. Лена пришла как свидетель. Артём, её жених, — рядом с ней.\n\nДима остался без квартиры, без машины, без репутации в офисе. Уехал к матери в Подольск.\n\nТы получила всё. Лена — Артёма обратно. Артём — правду.\n\nВы с Леной перешли с «вы» на «ты». Она первой написала: <em>«Аня, спасибо. Ты спасла нас обеих».</em>'
+  },
+  bad1: {
+    icon:'😔',
+    title:'Слишком рано',
+    when:'Через шесть месяцев',
+    text:'Дима всё отрицал. «Браслет? Друга. Тебе наснилось, ты переутомилась.» Ты ушла к маме на неделю. Он купил тебе путёвку в Турцию. Вы помирились.\n\nЧерез два месяца ты нашла её Instagram. <em>Она беременна. От него.</em>\n\nИногда нужно подождать, чтобы увидеть всё. Ты увидела половину — и поверила в его версию.'
+  },
+  good: {
+    icon:'⚖️',
+    title:'Свобода',
+    when:'Через шесть месяцев',
+    text:'Адвокат позвонила: «Документы готовы. Квартира за вами. Машина за вами. Алименты — он подписал.»\n\nТы сидишь на полу в пустой комнате — мебель он забрал. И тебе впервые за полгода <em>легко</em>.\n\nТы выиграла, потому что увидела вовремя. И собрала всё, что нужно.\n\nВчера позвонила Наташа: «Слушай, у моей сестры... похожая история. Можно я скину твой номер?»'
+  },
+  mid: {
+    icon:'🤝',
+    title:'Половина',
+    when:'Через шесть месяцев',
+    text:'Имущество поделили пополам. Ты живёшь в съёмной — он отсудил половину квартиры. Машину продали.\n\nТы не уверена, что у него была одна Лена. Не уверена, что он не вернётся к ней. <em>Не уверена ни в чём.</em>\n\nЭмоции — плохой адвокат. Но ты вышла. И это уже немало.'
+  },
+  bad2: {
+    icon:'💔',
+    title:'Горькая потеря',
+    when:'Через шесть месяцев',
+    text:'Ты живёшь у Наташи. Дима продал квартиру — оказалось, она была оформлена на него. Машину тоже. У тебя — две сумки и работа на удалёнке.\n\nОн женился на Лене. Их фото в Instagram. <em>Она в твоём браслете.</em>\n\nРешения в злости — самые дорогие. Ты ушла, не доев своё блюдо. Он съел твоё.'
+  },
 };
 
 function initUI() {
-  // dots
   const dotsEl = document.getElementById('dots');
   dotsEl.innerHTML = '';
   for (let i = 0; i < MAX; i++) {
@@ -474,7 +1583,6 @@ function initUI() {
     d.className = 'dot'; d.id = 'dot-'+i;
     dotsEl.appendChild(d);
   }
-  // cards
   const grid = document.getElementById('cards-grid');
   grid.innerHTML = '';
   CLUE_CARDS.forEach(c => {
@@ -510,67 +1618,189 @@ function showFeedback(msg) {
   if (!msg) { fb.classList.remove('show'); return; }
   fb.textContent = msg;
   fb.classList.add('show');
-  setTimeout(() => fb.classList.remove('show'), 3000);
+  setTimeout(() => fb.classList.remove('show'), 3500);
 }
+
+let sceneHistory = [];
 
 function renderScene(id) {
   const s = scenes[id];
   if (!s) return;
+  // Сохраняем историю переходов (без дубликатов подряд)
+  if (sceneHistory[sceneHistory.length - 1] !== id) {
+    sceneHistory.push(id);
+  }
   const area = document.getElementById('scene-area');
   let html = `<div class="scene-card">
     <div class="scene-tag">${s.tag}</div>
     <div class="scene-text">${s.text.replace(/\n/g,'<br>')}</div>
+    ${s.prompt ? `<div class="scene-prompt">${s.prompt}</div>` : ''}
   </div>
   <div class="choices">`;
+  let visibleIdx = 0;
   s.choices.forEach((c, i) => {
+    // Скрываем выбор, если для него нужна улика, которой нет
+    if (c.requires && !found.has(c.requires)) return;
+    visibleIdx++;
     html += `<button class="choice-btn" onclick="choose(${id},${i})">
-      <span class="choice-num">${i+1}</span>${c.text}
+      <span class="choice-num">${visibleIdx}</span>${c.text}
     </button>`;
   });
   html += '</div>';
+  // Кнопка «Шаг назад» — всегда видна. Если истории нет, ведёт в брифинг.
+  const backLabel = sceneHistory.length > 1 ? '← Шаг назад' : '← Назад к брифингу';
+  html += `<button class="back-btn" onclick="goBack()">${backLabel}</button>`;
   area.innerHTML = html;
 }
+
+function goBack() {
+  if (sceneHistory.length < 2) {
+    // На первой сцене — возвращаемся в брифинг
+    document.getElementById('game').classList.remove('visible');
+    document.getElementById('briefing').classList.add('visible');
+    window.scrollTo({ top: 0 });
+    return;
+  }
+  sceneHistory.pop(); // убираем текущую
+  const prev = sceneHistory.pop(); // достаём предыдущую (renderScene снова её добавит)
+  renderScene(prev);
+  document.getElementById('scene-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function backToIntro() {
+  // Из брифинга — обратно к прологу
+  document.getElementById('briefing').classList.remove('visible');
+  document.getElementById('intro').classList.remove('hidden');
+  window.scrollTo({ top: 0 });
+}
+
+let pendingNext = null;
 
 function choose(sceneId, idx) {
   const c = scenes[sceneId].choices[idx];
   if (c.cards && c.cards.length) revealCards(c.cards);
-  if (c.fb) showFeedback(c.fb);
-  const next = c.next;
+
+  if (c.fb) {
+    // Показываем результат как полноценную сцену с кнопкой «Дальше»
+    pendingNext = c.next;
+    showResultPanel(c.fb, c.cards || []);
+  } else {
+    goToNext(c.next);
+  }
+}
+
+function showResultPanel(text, revealedCards) {
+  const choicesEl = document.querySelector('.choices');
+  if (!choicesEl) return;
+  const hasCards = revealedCards && revealedCards.length > 0;
+  const meta = hasCards
+    ? (revealedCards.length > 1 ? `Улик добавлено в дело: ${revealedCards.length}` : 'Улика добавлена в дело')
+    : 'Что произошло';
+  // Собираем визуалы для всех найденных улик, у которых есть карточка-визуал
+  const visualsHtml = (revealedCards || [])
+    .map(id => EVIDENCE_VISUALS[id] || '')
+    .filter(Boolean)
+    .join('');
+  choicesEl.outerHTML = `
+    <div class="result-panel">
+      <div class="result-meta">${meta}</div>
+      <div class="result-text">${text.replace(/\n/g,'<br><br>')}</div>
+      ${visualsHtml}
+      <button class="continue-btn" onclick="continueAfterResult()">Что дальше →</button>
+    </div>`;
+  // Прокручиваем к результату, чтобы игрок видел его сразу
   setTimeout(() => {
-    if (typeof next === 'string' && endings[next]) renderEnding(next);
-    else renderScene(next);
-    document.getElementById('scene-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, c.fb ? 500 : 0);
+    const panel = document.querySelector('.result-panel');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function continueAfterResult() {
+  goToNext(pendingNext);
+  pendingNext = null;
+}
+
+function goToNext(next) {
+  if (typeof next === 'string' && endings[next]) renderEnding(next);
+  else renderScene(next);
+  document.getElementById('scene-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderEnding(id) {
   const e = endings[id];
   const area = document.getElementById('scene-area');
-  const verdict = clues >= 5 ? '✨ Отличный результат' : clues >= 3 ? '👍 Средний результат' : '😞 Мало улик';
+  const verdict = clues >= 10 ? '✨ Безупречно' : clues >= 6 ? '👍 Достойно' : '😞 Слишком мало улик';
   area.innerHTML = `<div class="ending-card">
     <div class="ending-icon">${e.icon}</div>
     <div class="ending-title">${e.title}</div>
-    <div class="ending-text">${e.text}</div>
-    <div class="ending-score">Улик: ${clues} из ${MAX} · ${verdict}</div><br>
+    <div class="ending-when">${e.when}</div>
+    <div class="ending-text">${e.text.replace(/\n/g,'<br><br>')}</div>
+    <div class="ending-score">Улик собрано: ${clues} из ${MAX} · ${verdict}</div><br>
     <button class="restart-btn" onclick="restartGame()">Сыграть снова</button>
+  </div>
+  <div class="vip-cta">
+    <div class="vip-label">VIP · Личное расследование</div>
+    <div class="vip-headline">Это была история Анны.<br>А что если бы Анна расследовала <em>вашу</em>?</div>
+    <button class="vip-btn" onclick="openVip()">Записаться к Анне →</button>
+    <div class="vip-fineprint">Анна разберёт вашу ситуацию и пришлёт персональное дело за 48 часов</div>
   </div>`;
 }
 
+function openVip() {
+  // TODO: заменить на реальную ссылку на форму записи / Telegram-бота / лендинг
+  alert('Скоро: форма записи к Анне. Пока — напишите нам в Telegram @your_handle');
+}
+
+let prologueTimers = [];
+
+function runPrologue() {
+  const p1 = document.getElementById('p1');
+  const p2 = document.getElementById('p2');
+  const p3 = document.getElementById('p3');
+  const btn = document.getElementById('startBtn');
+
+  prologueTimers.push(setTimeout(() => p1.classList.add('visible'), 800));
+  prologueTimers.push(setTimeout(() => p2.classList.add('visible'), 4000));
+  prologueTimers.push(setTimeout(() => p3.classList.add('visible'), 9500));
+  prologueTimers.push(setTimeout(() => btn.classList.add('show'), 14500));
+}
+
+function skipIntro() {
+  prologueTimers.forEach(clearTimeout);
+  document.querySelectorAll('.prologue p').forEach(p => p.classList.add('visible'));
+  document.getElementById('startBtn').classList.add('show');
+}
+
 function startGame() {
+  // После пролога показываем брифинг (а не сразу игру)
   document.getElementById('intro').classList.add('hidden');
+  setTimeout(() => {
+    document.getElementById('briefing').classList.add('visible');
+    window.scrollTo({ top: 0 });
+  }, 400);
+}
+
+function enterGame() {
+  // Из брифинга — в саму игру
+  document.getElementById('briefing').classList.remove('visible');
   const game = document.getElementById('game');
   game.classList.add('visible');
+  sceneHistory = [];
   initUI();
   renderScene(1);
 }
 
 function restartGame() {
   clues = 0; found.clear();
+  sceneHistory = [];
   initUI(); updateDots();
   document.getElementById('feedback').classList.remove('show');
   renderScene(1);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Запускаем пролог при загрузке
+runPrologue();
 </script>
 </body>
 </html>
